@@ -45,6 +45,7 @@ H tipi makineler: 37 adet (%9)
 
 
 📂 Proje Yapısı
+
 manufacturing-energy-efficiency/
 │
 ├── data/
