@@ -1,62 +1,106 @@
-⚡ Manufacturing Energy Efficiency Analysis
-🎯 Proje Özeti
-Bir üretim tesisindeki 10,000 makine saatlik verisi kullanılarak enerji verimliliği optimizasyonu ve maliyet tasarrufu fırsatları tespit edilmiştir.
-Ana Bulgu: 418 makine (%4.18) verimsiz çalışmakta ve yıllık 227,000 TL optimizasyon potansiyeli bulunmaktadır.
+# ⚡ Manufacturing Energy Efficiency Analysis
 
-💼 İş Problemi
-Üretim tesisinde:
+## 👋 Project Story
 
-300 makine 7/24 çalışıyor
-Aylık elektrik maliyeti ~50,000 TL
-Hedef: %10-15 enerji tasarrufu sağlamak
+This project is part of my **career transition** into data analytics. I wanted to demonstrate not just technical skills, but how I approach real business problems with data-driven thinking.
 
-Potansiyel Değer: 60,000 - 90,000 TL/yıl tasarruf
+### 💡 How the Idea Was Born
 
-📊 Veri Seti
-Kaynak: Kaggle - Machine Predictive Maintenance Classification
+I found a "predictive maintenance" dataset on Kaggle and thought:
+> *"What if I reframe this as an energy efficiency problem instead?"*
 
-Boyut: 10,000 satır × 10 kolon
-İçerik: Makine sensör verileri (sıcaklık, RPM, tork, aşınma)
-Yeniden Çerçeveleme: Arıza tahmini → Enerji verimliliği analizi
+I asked myself: *"If I were a consultant at a manufacturing facility, how would I approach this?"* 
 
+That question shaped the entire analysis - from business context to ROI calculations.
 
-🔍 Temel Bulgular
-1. High-Risk Makine Tespiti
+### 🎢 Challenges I Faced
 
-418 makine (%4.18) anormal çalışma profili gösteriyor
-Ortalama RPM: 2102 (normal: 1514) → %39 daha hızlı
-Ortalama Tork: 18.9 Nm (normal: 40.9) → %54 daha düşük
+**Challenge 1: My first hypothesis was wrong!**
 
-2. Verimsizlik Kanıtı
+I initially thought high-risk machines were doing "light work" because:
+- High RPM but low torque
+- Seemed logical: Light materials = less power needed
 
-Yüksek hız + düşük tork = boşa enerji harcama
-Arıza oranı: %8.37 (normal: %3.17) → 2.6 kat fazla!
+But when I **tested this hypothesis** with the data, the failure rate was **2.6x higher!** This proved inefficiency, not light work.
 
-3. İş Etkisi
+**Lesson learned:** Never trust assumptions without testing them! 📊
 
-High-risk makineler yıllık 454,826 TL arıza maliyeti oluşturuyor
-Optimizasyon potansiyeli: ~227,000 TL/yıl
+**Challenge 2: Energy formula gave misleading results**
 
-4. Öncelik Analizi
+Simple power formula showed high-risk machines consuming "less energy." But this ignored:
+- Friction losses (increases with RPM²)
+- Motor inefficiency at high speeds
+- Idle current draw
 
-L tipi makineler: 256 adet (%61) → En yüksek öncelik
-M tipi makineler: 125 adet (%30)
-H tipi makineler: 37 adet (%9)
+**Lesson learned:** Domain knowledge matters - formulas have limits! ⚠️
 
+I pivoted to **failure cost analysis** instead - more measurable and realistic.
 
-📂 Proje Yapısı
+### 🎯 What I Accomplished
 
+- ✅ Cleaned and analyzed 10,000 machine records
+- ✅ Performed hypothesis testing (data-driven decisions)
+- ✅ Applied best practices (labeled outliers instead of deleting)
+- ✅ Translated technical findings into business value (227K TL/year)
+- ✅ Acknowledged formula limitations honestly
+
+---
+
+## 🎯 Business Problem
+
+A manufacturing facility operates 300 machines 24/7 with monthly electricity costs of ~$42,000.
+
+**Objective:** Identify energy efficiency optimization opportunities targeting 10-15% savings.
+
+**Potential Value:** $50,000 - $75,000 per year in savings
+
+---
+
+## 📊 Dataset
+
+**Source:** [Kaggle - Machine Predictive Maintenance Classification](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification)
+
+- **Size:** 10,000 rows × 10 columns
+- **Content:** Machine sensor data (temperature, RPM, torque, wear)
+- **Reframing:** Predictive maintenance → Energy efficiency analysis
+
+---
+
+## 🔍 Key Findings
+
+### 1. High-Risk Machine Detection
+- **418 machines** (4.18%) exhibit abnormal operational profiles
+- Average RPM: **2102** (normal: 1514) → 39% faster
+- Average Torque: **18.9 Nm** (normal: 40.9) → 54% lower
+
+### 2. Proof of Inefficiency
+- High speed + low torque = **wasted energy**
+- Failure rate: **8.37%** (normal: 3.17%) → **2.6x higher!**
+
+### 3. Business Impact
+- High-risk machines cost **454,826 TL/year** in failures
+- **Optimization potential: ~227,000 TL/year**
+
+### 4. Prioritization
+- **L-type machines:** 256 units (61%) → Highest priority
+- **M-type machines:** 125 units (30%)
+- **H-type machines:** 37 units (9%)
+
+---
+
+## 📂 Project Structure
+```
 manufacturing-energy-efficiency/
 │
 ├── data/
-│   ├── raw/                          # Ham veri
-│   └── processed/                    # İşlenmiş veri
+│   ├── raw/                          # Raw data
+│   └── processed/                    # Cleaned data
 │
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb    ✅ Tamamlandı
-│   ├── 02_feature_engineering.ipynb  🔄 Devam ediyor
-│   ├── 03_modeling.ipynb             ⏳ Beklemede
-│   └── 04_sql_analysis.ipynb         ⏳ Beklemede
+│   ├── 01_data_exploration.ipynb    ✅ Completed
+│   ├── 02_feature_engineering.ipynb  🔄 In progress
+│   ├── 03_modeling.ipynb             ⏳ Planned
+│   └── 04_sql_analysis.ipynb         ⏳ Planned
 │
 ├── sql/
 │   └── energy_analysis_queries.sql
@@ -67,113 +111,215 @@ manufacturing-energy-efficiency/
 ├── reports/
 │   └── optimization_recommendations.pdf
 │
-├── images/                           # Görsel materyaller
+├── images/                           # Visual materials
 │
 ├── .gitignore
 ├── README.md
 └── requirements.txt
+```
 
-📓 Analiz Süreci
-✅ Tamamlanan Aşamalar
-1. Keşifsel Veri Analizi (EDA)
+---
 
-10,000 makine verisi analiz edildi
-Veri kalitesi kontrolü (tip düzeltme, duplicate kontrolü)
-Outlier analizi (IQR yöntemi) - 418 high-risk makine tespit edildi
-Hipotez testi: "Hafif iş" hipotezi test edildi ve çürütüldü
-İş değeri: 227K TL/yıl optimizasyon potansiyeli hesaplandı
+## 📚 My Learning Journey
 
-Metodoloji:
+### Technical Skills Developed
 
-✅ Outlier'lar silinmedi, etiketlendi (best practice)
-✅ Hipotez testi yapıldı (veri odaklı karar)
-✅ Domain knowledge ile formüller yorumlandı
-✅ İş değeri odaklı analiz
+**Data Quality:**
+- Data type validation and correction (integer → float)
+- Duplicate detection
+- Outlier detection using IQR method
+- **Decision:** Labeled outliers instead of deleting (real-world high RPM may be valid)
 
-📓 Notebook: 01_data_exploration.ipynb
+**Statistical Analysis:**
+- Hypothesis testing: "High-risk machines do light work" → False! (failure rate 2.6x higher)
+- Correlation analysis: RPM-Torque negative correlation (-0.87)
+- Comparative analysis: Normal vs High-risk
 
-🔜 Devam Eden Çalışmalar
-2. Feature Engineering
+**Data-Driven Decision Making:**
+- When energy formula was misleading, I pivoted to failure cost analysis
+- Acknowledged domain knowledge gaps and stated assumptions clearly
 
-Enerji tüketimi metrikleri (kW, maliyet/saat)
-Verimlilik skorları
-Vardiya simülasyonu (gece/gündüz tarife farkları)
+### Business Skills Developed
 
-3. SQL Analizi
+**Value Generation:**
+- Translated technical findings into financial impact (TL/year)
+- Calculated cost per failure: 13,000 TL
+- Identified optimization potential: 227,000 TL/year
 
-Maliyet segmentasyonu (tip/vardiya bazlı)
-En verimsiz %10 makinelerin tespiti
-Optimizasyon önceliklendirme
+**Executive Communication:**
+- Used executive summary format
+- Prioritized actions (L-type first)
+- Defined clear next steps
 
-4. Tahmin Modeli
+### Problems I Solved
 
-"Hangi makine optimize edilmeli?" tahmin modeli
-Feature importance analizi
-Risk skorlaması
+**1. Formula Discrepancy:**
+- Simple energy formula showed high-risk as "low consumption"
+- Solution: Researched physical realities (friction, efficiency)
+- Decision: Used formula with warnings, focused on failure costs
 
-5. Power BI Dashboard
+**2. Hypothesis Error:**
+- "Light work" hypothesis seemed logical but was wrong
+- Solution: Tested with data (failure rate, wear, type distribution)
+- Learned: Intuition ≠ Data!
 
-Yönetici özet raporu
-Makine performans takibi
-Optimizasyon önerileri (interaktif)
+**3. Outlier Decision:**
+- Delete or keep?
+- Solution: Researched best practices, chose labeling
+- Rationale: High RPM may be different machine types, real-world data
 
+### Resources Used
 
-🛠️ Kullanılan Teknolojiler
-Analiz & Modelleme:
+- **Kaggle Notebooks:** EDA techniques and visualization
+- **Medium Articles:** Energy efficiency domain knowledge
+- **Stack Overflow:** Pandas/Plotly troubleshooting
+- **Academic Papers:** Motor energy consumption formulas
+- **Mentorship:** Strategy and decision-making guidance
 
-Python 3.x
-Pandas, NumPy (veri manipülasyonu)
-Matplotlib, Seaborn, Plotly (görselleştirme)
-Scikit-learn (makine öğrenmesi)
+---
 
-Veritabanı:
+## 📓 Analysis Process
 
-SQLite (lokal analiz)
-SQL (maliyet segmentasyonu)
+### ✅ Completed: Exploratory Data Analysis (EDA)
 
-Raporlama:
+**What I Did:**
+- Analyzed 10,000 machine records
+- Data quality checks (type correction, duplicate detection)
+- Outlier analysis (IQR method) - detected 418 high-risk machines
+- Hypothesis testing: "Light work" hypothesis tested and rejected
+- **Business value:** Calculated 227K TL/year optimization potential
 
-Power BI (interaktif dashboard)
-Jupyter Notebook (teknik dokümantasyon)
+**Methodology:**
+- ✅ Labeled outliers instead of deleting (best practice)
+- ✅ Conducted hypothesis testing (data-driven decisions)
+- ✅ Interpreted formulas with domain knowledge
+- ✅ Focused on business value
 
-Versiyon Kontrol:
+📓 **[Notebook: 01_data_exploration.ipynb](notebooks/01_data_exploration.ipynb)**
 
-Git & GitHub
+---
 
+### 🔜 Planned Work
 
-🚀 Nasıl Çalıştırılır?
-1. Repository'yi Klonla
-bashgit clone https://github.com/Nisanuraltay/manufacturing-energy-efficiency.git
+**2. Feature Engineering**
+- Energy consumption metrics (kW, cost/hour)
+- Efficiency scores
+- Shift simulation (day/night rates)
+
+**3. SQL Analysis**
+- Cost segmentation (type/shift-based)
+- Bottom 10% machines by efficiency
+- Optimization prioritization
+
+**4. Predictive Model**
+- "Which machine to optimize?" prediction
+- Feature importance analysis
+- Risk scoring
+
+**5. Power BI Dashboard**
+- Executive summary
+- Machine performance tracking
+- Interactive optimization recommendations
+
+---
+
+## 🛠️ Technologies Used
+
+**Analysis & Modeling:**
+- Python 3.x
+- Pandas, NumPy (data manipulation)
+- Matplotlib, Seaborn, Plotly (visualization)
+- Scikit-learn (machine learning)
+
+**Database:**
+- SQLite (local analysis)
+- SQL (cost segmentation)
+
+**Reporting:**
+- Power BI (interactive dashboard)
+- Jupyter Notebook (technical documentation)
+
+**Version Control:**
+- Git & GitHub
+
+---
+
+## 🚀 How to Run
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/Nisanuraltay/manufacturing-energy-efficiency.git
 cd manufacturing-energy-efficiency
-2. Gerekli Kütüphaneleri Yükle
-bashpip install -r requirements.txt
-3. Notebook'ları Çalıştır
-bashjupyter notebook
-Not: Veri seti data/raw/ klasörüne Kaggle'dan indirilmelidir.
+```
 
-📌 Proje Hedefleri
-Bu proje, kariyer değişikliği sürecinde veri analizi yetkinliklerimi göstermek için geliştirilmiştir.
-Odak alanlar:
+### 2. Install Requirements
+```bash
+pip install -r requirements.txt
+```
 
-✅ Gerçek iş problemlerini çözme
-✅ Veri odaklı karar verme
-✅ İş değeri hesaplama (TL/yıl)
-✅ Profesyonel raporlama
-✅ End-to-end proje yönetimi
+### 3. Run Notebooks
+```bash
+jupyter notebook
+```
 
+**Note:** Download dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification) to `data/raw/`
 
-📊 Sonraki Adımlar
+---
 
-⏳ Feature engineering ve enerji metrikleri
-⏳ SQL ile derinlemesine maliyet analizi
-⏳ Machine learning modeli (optimizasyon önceliklendirme)
-⏳ Power BI dashboard geliştirme
-⏳ Yönetici raporu hazırlama
+## 📌 Project Goals
 
+This project was developed during my **career transition** to demonstrate data analytics capabilities.
 
-👤 İletişim
-Proje Sahibi: Nisa Nur Altay
-GitHub: github.com/Nisanuraltay
-LinkedIn: linkedin.com/in/nisanuraltay 
+**Focus areas:**
+- ✅ Solving real business problems
+- ✅ Data-driven decision making
+- ✅ Business value calculation (TL/year)
+- ✅ Professional reporting
+- ✅ End-to-end project management
 
-⭐ Bu projeyi beğendiyseniz, yıldız vermeyi unutmayın!
+---
+
+## 📊 Next Steps
+
+1. ⏳ Feature engineering and energy metrics
+2. ⏳ Deep-dive SQL cost analysis
+3. ⏳ Machine learning model (optimization prioritization)
+4. ⏳ Power BI dashboard development
+5. ⏳ Executive report preparation
+
+---
+
+## 👤 Contact
+
+**Project Owner:** Nisa Nur Altay
+
+I'm a career changer transitioning into data analytics. This project is part of my portfolio, demonstrating how I approach real business problems.
+
+**GitHub:** [github.com/Nisanuraltay](https://github.com/Nisanuraltay)
+
+**LinkedIn:** [www.linkedin.com/in/nisanuraltay] 
+
+📧 **Feel free to reach out for feedback or opportunities.**
+
+---
+
+## 💭 Feedback & Improvements
+
+I'm continuously improving this project. If you:
+- Notice a technical error
+- Have a different analytical approach to suggest
+- Want to collaborate
+
+**Open an issue or contact me directly!**
+
+Constructive criticism is welcome - I'm here to learn! 🚀
+
+---
+
+## 📄 License
+
+This project is open source under the MIT License.
+
+---
+
+**⭐ If you found this project helpful, please consider giving it a star!**
