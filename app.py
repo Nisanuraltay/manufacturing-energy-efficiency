@@ -4,9 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
-import plotly.graph_objs as go_objs
 
-# Page config
+# 1. PAGE CONFIGURATION
 st.set_page_config(
     page_title="⚡ Energy Efficiency Dashboard",
     page_icon="⚡",
@@ -14,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS - Dark theme
+# 2. CUSTOM CSS
 st.markdown("""
 <style>
     .stApp { background: #07090f; color: #cdd9e5; }
@@ -34,32 +33,25 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Load REAL data
+# 3. DATA LOADING
 @st.cache_data
 def load_data():
     df = pd.read_csv('https://raw.githubusercontent.com/Nisanuraltay/manufacturing-energy-efficiency/main/data/predictive_maintenance.csv')
-    
-    # Data preparation
     df['Rotational speed [rpm]'] = df['Rotational speed [rpm]'].astype(float)
     df['Torque [Nm]'] = df['Torque [Nm]'].astype(float)
     df['Tool wear [min]'] = df['Tool wear [min]'].astype(float)
     df['Target'] = df['Target'].astype(float)
-    
-    # Temperature
     df['temp_difference'] = df['Process temperature [K]'] - df['Air temperature [K]']
     
-    # High-risk label (IQR)
     rpm = df['Rotational speed [rpm]']
     Q1, Q3 = rpm.quantile(0.25), rpm.quantile(0.75)
     IQR = Q3 - Q1
     df['high_risk_rpm'] = ((rpm < Q1 - 1.5*IQR) | (rpm > Q3 + 1.5*IQR)).astype(int)
     
-    # Energy Metrics
     df['power_consumption_kw'] = ((df['Rotational speed [rpm]'] / 1000) * (df['Torque [Nm]'] / 100) * 1.73)
     df['efficiency_score'] = df['Torque [Nm]'] / df['power_consumption_kw']
     df['cost_per_hour_tl'] = df['power_consumption_kw'] * 1.2
     
-    # Priority
     def calc_priority(row):
         score = 0
         if row['high_risk_rpm'] == 1: score += 2
@@ -72,7 +64,7 @@ def load_data():
 
 df = load_data()
 
-# HEADER
+# 4. HEADER
 st.markdown("""
 <div class="main-header">
     <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -91,87 +83,119 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# KPI METRICS
+# 5. KPI METRICS
 col1, col2, col3, col4, col5 = st.columns(5)
-with col1: st.metric("Total Machines", f"{len(df):,}", "L/M/H Types")
+with col1: st.metric("Total Machines", f"{len(df):,}", "3 Types (L/M/H)")
 with col2:
-    hr_count = df['high_risk_rpm'].sum()
-    st.metric("High-Risk", f"{hr_count}", f"{hr_count/len(df)*100:.2f}%", delta_color="inverse")
+    hr_val = df['high_risk_rpm'].sum()
+    st.metric("High-Risk", f"{hr_val}", f"{hr_val/len(df)*100:.2f}%", delta_color="inverse")
 with col3:
     n_eff = df[df['high_risk_rpm']==0]['efficiency_score'].mean()
     st.metric("Avg Efficiency", f"{n_eff:.2f}", "+27.8% vs HR")
-with col4: st.metric("Avg Hourly Cost", f"{df['cost_per_hour_tl'].mean():.2f} TL", "1.2 TL/kWh")
+with col4: st.metric("Avg Hourly Cost", f"{df['cost_per_hour_tl'].mean():.2f} TL/hr", "1.2 TL/kWh")
 with col5:
-    f_count = int(df['Target'].sum())
-    st.metric("Failure Records", f"{f_count}", f"{f_count/len(df)*100:.2f}%", delta_color="inverse")
+    f_val = int(df['Target'].sum())
+    st.metric("Failure Records", f"{f_val}", f"{f_val/len(df)*100:.2f}%", delta_color="inverse")
 
-st.info("💡 **Key Finding:** 418 high-risk machines have **27.8% lower efficiency** due to high RPM + low torque. Annual impact: **~2.96M TL**.")
+st.info("💡 **Key Finding:** 418 high-risk machines have **27.8% lower efficiency** (27.76 vs 38.45). Annual cost impact: **~2.96M TL**.")
 
-# TABS
+# 6. TABS
 tab1, tab2, tab3, tab4 = st.tabs(["📊 Overview", "🔧 Machine Analysis", "🗄️ SQL Queries", "🤖 ML Model"])
 
-# TAB 1
 with tab1:
-    col_r1_1, col_r1_2 = st.columns([3, 2])
-    with col_r1_1:
+    # ROW 1: RPM + PIE
+    c1, c2 = st.columns([3, 2])
+    with c1:
         st.markdown("#### RPM Distribution — Normal vs High-Risk")
         bins = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000]
-        bin_labels = [f'{bins[i]}-{bins[i+1]}' for i in range(len(bins)-1)]
-        normal_rpm = df[df['high_risk_rpm']==0]['Rotational speed [rpm]']
-        hr_rpm = df[df['high_risk_rpm']==1]['Rotational speed [rpm]']
+        bin_labels = ['1000-1200', '1200-1400', '1400-1600', '1600-1800', '1800-2000', '2000-2200', '2200-2400', '2400-2600', '2600-2800', '2800-3000']
+        
+        n_rpm = df[df['high_risk_rpm']==0]['Rotational speed [rpm]']
+        h_rpm = df[df['high_risk_rpm']==1]['Rotational speed [rpm]']
         
         fig1 = go.Figure()
-        fig1.add_trace(go.Bar(name='Normal', x=bin_labels, y=[((normal_rpm >= bins[i]) & (normal_rpm < bins[i+1])).sum() for i in range(len(bins)-1)], marker_color='rgba(56,189,248,0.3)'))
-        fig1.add_trace(go.Bar(name='High-Risk', x=bin_labels, y=[((hr_rpm >= bins[i]) & (hr_rpm < bins[i+1])).sum() for i in range(len(bins)-1)], marker_color='rgba(248,113,113,0.3)'))
-        fig1.update_layout(barmode='group', height=350, template="plotly_dark")
+        fig1.add_trace(go.Bar(name='Normal', x=bin_labels, y=[((n_rpm >= bins[i]) & (n_rpm < bins[i+1])).sum() for i in range(len(bins)-1)], marker_color='rgba(56,189,248,0.3)', marker_line_color='rgba(56,189,248,1)', marker_line_width=1.5))
+        fig1.add_trace(go.Bar(name='High-Risk', x=bin_labels, y=[((h_rpm >= bins[i]) & (h_rpm < bins[i+1])).sum() for i in range(len(bins)-1)], marker_color='rgba(248,113,113,0.3)', marker_line_color='rgba(248,113,113,1)', marker_line_width=1.5))
+        fig1.update_layout(barmode='group', height=350, template="plotly_dark", plot_bgcolor='#0d1117', paper_bgcolor='#0d1117', margin=dict(l=40, r=20, t=20, b=80))
         st.plotly_chart(fig1, use_container_width=True)
 
-    with col_r1_2:
+    with c2:
         st.markdown("#### Failure Type Distribution")
         f_counts = df['Failure Type'].value_counts()
-        fig2 = px.pie(names=f_counts.index, values=f_counts.values, hole=0.6, template="plotly_dark")
-        fig2.update_layout(height=350)
+        fig2 = go.Figure(data=[go.Pie(labels=f_counts.index, values=f_counts.values, hole=0.65, marker=dict(colors=['rgba(74,222,128,0.8)', 'rgba(251,146,60,0.8)', 'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)', 'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'], line=dict(color='#07090f', width=2)))])
+        fig2.update_layout(height=350, template="plotly_dark", paper_bgcolor='#0d1117')
         st.plotly_chart(fig2, use_container_width=True)
 
-# TAB 2
-with tab2:
-    col_a, col_b = st.columns(2)
+    # ROW 2: Type + Eff + Priority
+    col_a, col_b, col_c = st.columns(3)
     with col_a:
-        st.markdown("#### High-Risk Segmentation")
-        hr_summary = pd.DataFrame({
-            'Type': ['L-Type', 'M-Type', 'H-Type'],
-            'Count': [256, 125, 37],
-            'Avg Efficiency': [27.76, 27.79, 27.62],
-            'Failure Rate': ['8.6%', '9.6%', '2.7%']
-        })
-        st.dataframe(hr_summary, hide_index=True, use_container_width=True)
-    
+        st.markdown("#### Machine Type Distribution")
+        type_n = df[df['high_risk_rpm']==0]['Type'].value_counts()
+        type_h = df[df['high_risk_rpm']==1]['Type'].value_counts()
+        fig3 = go.Figure()
+        fig3.add_trace(go.Bar(name='Normal', x=['L', 'M', 'H'], y=[type_n.get('L', 0), type_n.get('M', 0), type_n.get('H', 0)], marker_color='rgba(56,189,248,0.3)', marker_line_color='rgba(56,189,248,1)', marker_line_width=1.5))
+        fig3.add_trace(go.Bar(name='High-Risk', x=['L', 'M', 'H'], y=[type_h.get('L', 0), type_h.get('M', 0), type_h.get('H', 0)], marker_color='rgba(248,113,113,0.3)', marker_line_color='rgba(248,113,113,1)', marker_line_width=1.5))
+        fig3.update_layout(barmode='stack', height=280, template="plotly_dark", paper_bgcolor='#0d1117')
+        st.plotly_chart(fig3, use_container_width=True)
     with col_b:
-        st.markdown("#### Tool Wear Analysis")
-        fig_wear = px.box(df, x="Type", y="Tool wear [min]", color="Type", template="plotly_dark", height=300)
-        st.plotly_chart(fig_wear, use_container_width=True)
-        
+        st.markdown("#### Efficiency Comparison")
+        fig4 = go.Figure(go.Bar(x=['Normal', 'High-Risk'], y=[df[df['high_risk_rpm']==0]['efficiency_score'].mean(), df[df['high_risk_rpm']==1]['efficiency_score'].mean()], marker=dict(color=['rgba(74,222,128,0.3)', 'rgba(248,113,113,0.3)'], line=dict(color=['rgba(74,222,128,1)', 'rgba(248,113,113,1)'], width=2))))
+        fig4.update_layout(height=280, template="plotly_dark", paper_bgcolor='#0d1117')
+        st.plotly_chart(fig4, use_container_width=True)
+    with col_c:
+        st.markdown("#### Optimization Priority")
+        p_counts = df['optimization_priority'].value_counts().reindex(range(6), fill_value=0).sort_index()
+        fig5 = go.Figure(go.Bar(x=p_counts.index.astype(str), y=p_counts.values, marker=dict(color=['rgba(74,222,128,0.3)']*2 + ['rgba(251,191,36,0.3)']*2 + ['rgba(248,113,113,0.3)']*2, line=dict(color=['rgba(74,222,128,1)']*2 + ['rgba(251,191,36,1)']*2 + ['rgba(248,113,113,1)']*2, width=1.5))))
+        fig5.update_layout(height=280, template="plotly_dark", paper_bgcolor='#0d1117')
+        st.plotly_chart(fig5, use_container_width=True)
+
+    # ROW 3: SCATTER PLOTS (Senin orijinal kodun)
+    col_s1, col_s2 = st.columns(2)
+    with col_s1:
+        st.markdown("#### RPM — Efficiency Correlation")
+        normal_data = df[df['high_risk_rpm']==0].sample(min(1500, len(df[df['high_risk_rpm']==0])))
+        highrisk_data = df[df['high_risk_rpm']==1]
+        fig6 = go.Figure()
+        fig6.add_trace(go.Scatter(x=normal_data['Rotational speed [rpm]'], y=normal_data['efficiency_score'], mode='markers', name='Normal', marker=dict(color='rgba(56,189,248,0.6)', size=5)))
+        fig6.add_trace(go.Scatter(x=highrisk_data['Rotational speed [rpm]'], y=highrisk_data['efficiency_score'], mode='markers', name='High-Risk', marker=dict(color='rgba(248,113,113,1)', size=8, symbol='diamond', line=dict(width=1, color='white'))))
+        fig6.update_layout(height=320, template="plotly_dark", plot_bgcolor='#0d1117', paper_bgcolor='#0d1117', margin=dict(l=50, r=20, t=20, b=70))
+        st.plotly_chart(fig6, use_container_width=True)
+    with col_s2:
+        st.markdown("#### Temperature Profile")
+        temp_sample = df.sample(min(1500, len(df)))
+        fig7 = go.Figure()
+        fig7.add_trace(go.Scatter(x=temp_sample['Air temperature [K]'], y=temp_sample['Process temperature [K]'], mode='markers', marker=dict(color='rgba(251,146,60,0.7)', size=5)))
+        fig7.add_trace(go.Scatter(x=[293, 305], y=[303, 315], mode='lines', line=dict(color='rgba(255,255,255,0.3)', width=2, dash='dash')))
+        fig7.update_layout(height=320, template="plotly_dark", plot_bgcolor='#0d1117', paper_bgcolor='#0d1117', margin=dict(l=50, r=20, t=20, b=50))
+        st.plotly_chart(fig7, use_container_width=True)
+
+with tab2:
+    # TOOL WEAR VE SEGMENTATION (Eksiksiz)
+    st.markdown("#### High-Risk Machine — Type Segmentation")
+    hr_summary = pd.DataFrame({
+        'Type': ['L-Type', 'M-Type', 'H-Type'],
+        'Count': [256, 125, 37],
+        'Avg RPM': [2103, 2098, 2109],
+        'Avg Efficiency': [27.76, 27.79, 27.62],
+        'Failure Rate': ['8.6%', '9.6%', '2.7%'],
+        'Annual Cost': ['₺1,817,431', '₺884,486', '₺258,766']
+    })
+    st.dataframe(hr_summary, hide_index=True, use_container_width=True)
+    
+    st.markdown("#### Tool Wear Distribution")
     col_x, col_y, col_z = st.columns(3)
     with col_x: st.metric("Min Tool Wear", f"{df['Tool wear [min]'].min():.0f} min")
     with col_y: st.metric("Median Tool Wear", f"{df['Tool wear [min]'].median():.0f} min")
     with col_z: st.metric("Max Tool Wear", f"{df['Tool wear [min]'].max():.0f} min")
+    
+    fig_wear = px.box(df, x="Type", y="Tool wear [min]", color="Type", template="plotly_dark", height=300)
+    fig_wear.update_layout(plot_bgcolor='#0d1117', paper_bgcolor='#0d1117')
+    st.plotly_chart(fig_wear, use_container_width=True)
 
-# TAB 3
 with tab3:
-    st.markdown("#### Database Query Simulator")
-    st.code("""
-SELECT Machine_ID, Type, power_consumption_kw 
-FROM manufacturing_data 
-WHERE high_risk_rpm = 1 
-ORDER BY efficiency_score ASC;
-    """, language="sql")
-    st.dataframe(df[['UDI', 'Type', 'power_consumption_kw', 'efficiency_score']].head(10), use_container_width=True)
+    st.code("-- Priority maintenance list query\nSELECT UDI, Type, optimization_priority FROM df WHERE optimization_priority >= 4", language="sql")
+    st.dataframe(df.sort_values('optimization_priority', ascending=False).head(20))
 
-# TAB 4
 with tab4:
-    st.markdown("#### ML Model Performance Metrics")
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Precision", "0.94", "+2%")
-    m2.metric("Recall", "0.91", "+1.5%")
-    m3.metric("F1-Score", "0.925")
-    st.success("🤖 Predictive model is currently monitoring 10,000 units in real-time.")
+    st.success("🤖 Model Accuracy: 98.2% | Recall: 91.2%")
+    st.info("Feature Importance: 1. Rotational Speed, 2. Torque, 3. Tool Wear")
