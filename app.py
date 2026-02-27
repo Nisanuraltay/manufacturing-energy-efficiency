@@ -689,17 +689,19 @@ with tab2:
             margin=dict(l=50, r=20, t=20, b=40)
         )
         st.plotly_chart(fig_hr, use_container_width=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Row 2: Energy Category + Tool Wear
+    # ────────────────────────────────────────────────
+    # ROW 2: Energy Category + Tool Wear
+    # ────────────────────────────────────────────────
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("#### Energy Category Distribution")
         st.caption("Power consumption segmentation")
         
-        # Define categories based on actual data
+        # Categorize energy consumption
         def categorize_energy(power):
             if power < 0.8:
                 return 'Low'
@@ -711,96 +713,111 @@ with tab2:
         df['energy_category'] = df['power_consumption_kw'].apply(categorize_energy)
         energy_counts = df['energy_category'].value_counts()
         
-        # Show actual counts
-        st.write(f"**Breakdown:**")
-        st.write(f"- Low (<0.8 kW): {energy_counts.get('Low', 0):,} machines")
-        st.write(f"- Medium (0.8-1.2 kW): {energy_counts.get('Medium', 0):,} machines")
-        st.write(f"- High (>1.2 kW): {energy_counts.get('High', 0):,} machines")
+        # Display breakdown
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
+            st.metric("Low (<0.8 kW)", f"{energy_counts.get('Low', 0):,}")
+        with col_b:
+            st.metric("Medium (0.8-1.2)", f"{energy_counts.get('Medium', 0):,}")
+        with col_c:
+            st.metric("High (>1.2 kW)", f"{energy_counts.get('High', 0):,}")
         
+        # Pie chart
         fig_energy = go.Figure(data=[go.Pie(
             labels=energy_counts.index,
             values=energy_counts.values,
             hole=0.6,
             marker=dict(
-                colors=['rgba(248,113,113,0.7)', 'rgba(56,189,248,0.7)', 'rgba(74,222,128,0.7)'],
+                colors={
+                    'Low': 'rgba(248,113,113,0.7)',
+                    'Medium': 'rgba(56,189,248,0.7)',
+                    'High': 'rgba(74,222,128,0.7)'
+                },
                 line=dict(color='#07090f', width=2)
             ),
             textposition='inside',
             textinfo='label+percent',
             textfont=dict(size=11, color='#cdd9e5', weight='bold'),
-            hovertemplate='<b>%{label}</b><br>Count: %{value}<br>Percent: %{percent}<extra></extra>'
+            hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>Percent: %{percent}<extra></extra>'
         )])
         fig_energy.update_layout(
-            height=240,
+            height=280,
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
             showlegend=True,
             legend=dict(
                 orientation='h',
-                y=-0.1,
+                y=-0.15,
                 x=0.5,
                 xanchor='center',
                 font=dict(size=9, color='#cdd9e5')
             ),
-            margin=dict(l=20, r=20, t=10, b=40)
+            margin=dict(l=20, r=20, t=10, b=50)
         )
         st.plotly_chart(fig_energy, use_container_width=True)
         
-        # High-risk breakdown
-        highrisk_energy = df[df['high_risk_rpm']==1]['energy_category'].value_counts()
-        low_pct = (highrisk_energy.get('Low', 0) / 418 * 100) if len(highrisk_energy) > 0 else 0
-        
-        st.caption(f"⚠️ **High-Risk:** {low_pct:.1f}% are 'Low' category (misleading - low torque causes low power calculation)")
-```
-
----
-
-## 🔑 KRİTİK DEĞİŞİKLİKLER:
-
-1. **Manuel kategorileme:** `apply(categorize_energy)` ile gerçek değerler
-2. **Sayıları göster:** Text olarak breakdown eklendi
-3. **High-risk breakdown:** 97.6% doğrulaması eklendi
-4. **Hover bilgisi:** Sayıları görmek için tooltip
-
----
-
-## ❓ BEKLENEN SONUÇ:
-
-**Gerçek dağılım muhtemelen:**
-```
-Low: ~874 (%8.7)
-Medium: ~7,362 (%73.6)
-High: ~1,764 (%17.6)
+        # High-risk note
+        if df['high_risk_rpm'].sum() > 0:
+            highrisk_energy = df[df['high_risk_rpm']==1]['energy_category'].value_counts()
+            low_pct = (highrisk_energy.get('Low', 0) / df['high_risk_rpm'].sum() * 100)
+            st.caption(f"⚠️ **High-Risk:** {low_pct:.1f}% in 'Low' category (misleading formula - low torque)")
     
     with col2:
         st.markdown("#### Tool Wear Distribution")
-        st.caption("Average: 107.95 minutes")
+        st.caption(f"Average: {df['Tool wear [min]'].mean():.1f} minutes")
         
-        wear_bins = pd.cut(df['Tool wear [min]'], bins=5)
-        wear_counts = wear_bins.value_counts().sort_index()
+        # Create bins for tool wear
+        wear_bins = [0, 50, 100, 150, 200, 253]
+        wear_labels = ['0-50', '50-100', '100-150', '150-200', '200-253']
+        
+        df['wear_bin'] = pd.cut(
+            df['Tool wear [min]'],
+            bins=wear_bins,
+            labels=wear_labels,
+            include_lowest=True
+        )
+        wear_counts = df['wear_bin'].value_counts().sort_index()
         
         fig_wear = go.Figure()
         fig_wear.add_trace(go.Bar(
-            x=[str(x) for x in wear_counts.index],
-            y=wear_counts.values,
+            x=wear_labels,
+            y=[wear_counts.get(label, 0) for label in wear_labels],
             marker_color='rgba(251,146,60,0.3)',
             marker_line_color='#fb923c',
-            marker_line_width=1.5
+            marker_line_width=2,
+            text=[wear_counts.get(label, 0) for label in wear_labels],
+            textposition='outside',
+            textfont=dict(color='#cdd9e5')
         ))
         fig_wear.update_layout(
-            height=300,
+            height=320,
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
             xaxis=dict(
                 gridcolor='#1e2738',
-                title='Tool Wear Range (min)',
+                title='Tool Wear Range (minutes)',
                 color='#cdd9e5',
                 tickangle=-45
             ),
-            yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
+            yaxis=dict(
+                gridcolor='#1e2738',
+                title='Machine Count',
+                color='#cdd9e5'
+            ),
             showlegend=False,
             margin=dict(l=50, r=20, t=20, b=80)
         )
         st.plotly_chart(fig_wear, use_container_width=True)
+        
+        # Summary stats
+        col_x, col_y, col_z = st.columns(3)
+        with col_x:
+            st.metric("Min", f"{df['Tool wear [min]'].min():.0f} min")
+        with col_y:
+            st.metric("Median", f"{df['Tool wear [min]'].median():.0f} min")
+        with col_z:
+            st.metric("Max", f"{df['Tool wear [min]'].max():.0f} min")
+    
+
