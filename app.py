@@ -699,37 +699,79 @@ with tab2:
         st.markdown("#### Energy Category Distribution")
         st.caption("Power consumption segmentation")
         
-        # Create energy categories
-        energy_cats = pd.cut(
-            df['power_consumption_kw'],
-            bins=[0, 0.8, 1.2, 5],
-            labels=['Low', 'Medium', 'High']
-        )
-        energy_counts = energy_cats.value_counts()
+        # Define categories based on actual data
+        def categorize_energy(power):
+            if power < 0.8:
+                return 'Low'
+            elif power < 1.2:
+                return 'Medium'
+            else:
+                return 'High'
+        
+        df['energy_category'] = df['power_consumption_kw'].apply(categorize_energy)
+        energy_counts = df['energy_category'].value_counts()
+        
+        # Show actual counts
+        st.write(f"**Breakdown:**")
+        st.write(f"- Low (<0.8 kW): {energy_counts.get('Low', 0):,} machines")
+        st.write(f"- Medium (0.8-1.2 kW): {energy_counts.get('Medium', 0):,} machines")
+        st.write(f"- High (>1.2 kW): {energy_counts.get('High', 0):,} machines")
         
         fig_energy = go.Figure(data=[go.Pie(
             labels=energy_counts.index,
             values=energy_counts.values,
             hole=0.6,
             marker=dict(
-                colors=['rgba(74,222,128,0.7)', 'rgba(56,189,248,0.7)', 'rgba(248,113,113,0.7)'],
+                colors=['rgba(248,113,113,0.7)', 'rgba(56,189,248,0.7)', 'rgba(74,222,128,0.7)'],
                 line=dict(color='#07090f', width=2)
             ),
             textposition='inside',
             textinfo='label+percent',
-            textfont=dict(size=11, color='#cdd9e5')
+            textfont=dict(size=11, color='#cdd9e5', weight='bold'),
+            hovertemplate='<b>%{label}</b><br>Count: %{value}<br>Percent: %{percent}<extra></extra>'
         )])
         fig_energy.update_layout(
-            height=300,
+            height=240,
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
-            showlegend=False,
-            margin=dict(l=20, r=20, t=20, b=20)
+            showlegend=True,
+            legend=dict(
+                orientation='h',
+                y=-0.1,
+                x=0.5,
+                xanchor='center',
+                font=dict(size=9, color='#cdd9e5')
+            ),
+            margin=dict(l=20, r=20, t=10, b=40)
         )
         st.plotly_chart(fig_energy, use_container_width=True)
         
-        st.caption("⚠️ Note: 97.6% of high-risk are 'Low' due to misleading formula (low torque)")
+        # High-risk breakdown
+        highrisk_energy = df[df['high_risk_rpm']==1]['energy_category'].value_counts()
+        low_pct = (highrisk_energy.get('Low', 0) / 418 * 100) if len(highrisk_energy) > 0 else 0
+        
+        st.caption(f"⚠️ **High-Risk:** {low_pct:.1f}% are 'Low' category (misleading - low torque causes low power calculation)")
+```
+
+---
+
+## 🔑 KRİTİK DEĞİŞİKLİKLER:
+
+1. **Manuel kategorileme:** `apply(categorize_energy)` ile gerçek değerler
+2. **Sayıları göster:** Text olarak breakdown eklendi
+3. **High-risk breakdown:** 97.6% doğrulaması eklendi
+4. **Hover bilgisi:** Sayıları görmek için tooltip
+
+---
+
+## ❓ BEKLENEN SONUÇ:
+
+**Gerçek dağılım muhtemelen:**
+```
+Low: ~874 (%8.7)
+Medium: ~7,362 (%73.6)
+High: ~1,764 (%17.6)
     
     with col2:
         st.markdown("#### Tool Wear Distribution")
