@@ -4,9 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
-import plotly.graph_objs as go_objs
 
-# Page config - 
+# Page config
 st.set_page_config(
     page_title="⚡ Energy Efficiency Dashboard",
     page_icon="⚡",
@@ -14,16 +13,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS - Dark theme
+# Session state for navigation
+if 'page' not in st.session_state:
+    st.session_state.page = 'cover'
+
+# Custom CSS
 st.markdown("""
 <style>
-    /* Main background */
     .stApp {
         background: #07090f;
         color: #cdd9e5;
     }
     
-    /* Header */
     .main-header {
         background: linear-gradient(135deg, #0d1117 0%, #161b24 100%);
         border: 1px solid #1e2738;
@@ -32,7 +33,6 @@ st.markdown("""
         margin-bottom: 24px;
     }
     
-    /* KPI cards */
     .stMetric {
         background: #0d1117;
         border: 1px solid #1e2738;
@@ -40,7 +40,6 @@ st.markdown("""
         padding: 16px;
     }
     
-    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
         background: #0d1117;
         border: 1px solid #1e2738;
@@ -62,26 +61,44 @@ st.markdown("""
         color: #cdd9e5;
     }
     
-    /* Cards */
-    div[data-testid="stExpander"] {
-        background: #0d1117;
-        border: 1px solid #1e2738;
-        border-radius: 10px;
-    }
-    
-    /* Hide default padding */
     .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
     }
+    
+    /* Enterance button */
+    .stButton > button {
+        background: linear-gradient(135deg, #ff8c00, #ffaa00);
+        color: #000;
+        font-weight: 800;
+        font-size: 18px;
+        padding: 16px 48px;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 8px 30px rgba(255,140,0,0.4);
+        transition: all 0.3s;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(255,140,0,0.6);
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Load REAL data
+# Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv('data/predictive_maintenance_final_data.csv')
+    # GITHUB RAW URL
+    url = 'https://raw.githubusercontent.com/Nisanuraltay/manufacturing-energy-efficiency/main/data/predictive_maintenance.csv'
     
+    try:
+        df = pd.read_csv(url)
+    except:
+        # Fallback - local
+        df = pd.read_csv('data/predictive_maintenance.csv')
+    
+    # Data prep
     df['Rotational speed [rpm]'] = df['Rotational speed [rpm]'].astype(float)
     df['Torque [Nm]'] = df['Torque [Nm]'].astype(float)
     df['Tool wear [min]'] = df['Tool wear [min]'].astype(float)
@@ -106,8 +123,86 @@ def load_data():
         return min(score, 5)
     
     df['optimization_priority'] = df.apply(calc_priority, axis=1)
+    
     return df
 
+# ═══════════════════════════════════════════════════
+# COVER PAGE
+# ═══════════════════════════════════════════════════
+if st.session_state.page == 'cover':
+    st.markdown("""
+    <div style="
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: linear-gradient(180deg, #07090f 0%, #0d1117 100%);
+        padding: 60px 40px;
+    ">
+        <div style="font-size: 80px; margin-bottom: 20px; 
+                    filter: drop-shadow(0 0 40px rgba(255,165,0,0.6));">
+            ⚡
+        </div>
+        
+        <div style="font-size: 12px; letter-spacing: 8px; text-transform: uppercase; 
+                    color: rgba(255,255,255,0.3); margin-bottom: 24px;">
+            INDUSTRIAL DATA SCIENCE PORTFOLIO
+        </div>
+        
+        <div style="font-size: 48px; font-weight: 900; letter-spacing: 4px; 
+                    text-transform: uppercase; color: #fff; line-height: 1.2; margin-bottom: 16px;">
+            MANUFACTURING ENERGY<br>
+            <span style="color: #ffaa00;">EFFICIENCY ANALYSIS</span>
+        </div>
+        
+        <div style="font-size: 16px; color: rgba(255,255,255,0.5); 
+                    font-style: italic; margin-bottom: 40px; max-width: 600px;">
+            Predictive Maintenance · Machine Learning · SQL Analytics<br>
+            <span style="color: rgba(255,165,0,0.8); font-weight: 600;">
+                "10,000 Machines · 418 High-Risk Identified · 227K TL Savings Potential"
+            </span>
+        </div>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px;">
+            <span style="padding: 6px 16px; border: 1px solid rgba(255,140,0,0.4); 
+                        color: rgba(255,140,0,0.8); font-size: 10px; letter-spacing: 2px; 
+                        text-transform: uppercase; border-radius: 20px;">PYTHON</span>
+            <span style="padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); 
+                        color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; 
+                        text-transform: uppercase; border-radius: 20px;">SQL</span>
+            <span style="padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); 
+                        color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; 
+                        text-transform: uppercase; border-radius: 20px;">RANDOM FOREST</span>
+            <span style="padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); 
+                        color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; 
+                        text-transform: uppercase; border-radius: 20px;">STREAMLIT</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Enter button
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🚀 ENTER DASHBOARD", use_container_width=True):
+            st.session_state.page = 'dashboard'
+            st.rerun()
+    
+    st.markdown("""
+    <div style="text-align: center; margin-top: 60px; font-size: 11px; 
+                color: rgba(255,255,255,0.2); letter-spacing: 3px; text-transform: uppercase;">
+        N. Nur Altay · Data Analyst · February 2026
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.stop()
+
+# ═══════════════════════════════════════════════════
+# DASHBOARD (After button click)
+# ═══════════════════════════════════════════════════
+
+# Load data
 df = load_data()
 
 # HEADER
@@ -132,7 +227,7 @@ st.markdown("""
         <div style="display: flex; gap: 12px; align-items: center;">
             <div style="padding: 8px 16px; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); 
                         border-radius: 20px; font-size: 11px; color: #4ade80; display: flex; align-items: center; gap: 8px;">
-                <div style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                <div style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%;"></div>
                 Live Dashboard
             </div>
             <div style="padding: 8px 16px; background: #161b24; border: 1px solid #1e2738; 
@@ -144,62 +239,28 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
-
-
-# KPI METRICS
+# KPIs
 col1, col2, col3, col4, col5 = st.columns(5)
-
 with col1:
-    st.metric(
-        label="🏭 Total Machines",
-        value=f"{len(df):,}",
-        delta="3 Types (L/M/H)"
-    )
-
+    st.metric("🏭 Total Machines", f"{len(df):,}", delta="3 Types")
 with col2:
-    high_risk_count = df['high_risk_rpm'].sum()
-    st.metric(
-        label="⚠️ High-Risk",
-        value=f"{high_risk_count}",
-        delta=f"{high_risk_count/len(df)*100:.2f}%",
-        delta_color="inverse"
-    )
-
+    high_risk = df['high_risk_rpm'].sum()
+    st.metric("⚠️ High-Risk", f"{high_risk}", delta=f"{high_risk/len(df)*100:.1f}%", delta_color="inverse")
 with col3:
     normal_eff = df[df['high_risk_rpm']==0]['efficiency_score'].mean()
-    st.metric(
-        label="📈 Avg Efficiency (Normal)",
-        value=f"{normal_eff:.2f}",
-        delta="+27.8% vs High-Risk"
-    )
-
+    st.metric("📈 Avg Efficiency", f"{normal_eff:.1f}", delta="+27.8%")
 with col4:
-    avg_cost = df['cost_per_hour_tl'].mean()
-    st.metric(
-        label="💰 Avg Hourly Cost",
-        value=f"{avg_cost:.2f} TL/hr",
-        delta="1.2 TL/kWh"
-    )
-
+    st.metric("💰 Avg Cost", f"{df['cost_per_hour_tl'].mean():.2f} TL/hr", delta="1.2 TL/kWh")
 with col5:
-    failure_count = int(df['Target'].sum())
-    st.metric(
-        label="🔥 Failure Records",
-        value=f"{failure_count}",
-        delta=f"{failure_count/len(df)*100:.2f}%",
-        delta_color="inverse"
-    )
+    failures = int(df['Target'].sum())
+    st.metric("🔥 Failures", f"{failures}", delta=f"{failures/len(df)*100:.1f}%", delta_color="inverse")
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.info("💡 **Key Finding:** 418 high-risk machines have **27.8% lower efficiency** (27.76 vs 38.45). Annual cost impact: **~2.96M TL**.")
 
-# INSIGHT
-st.info("""
-💡 **Key Finding:** 418 high-risk machines have **27.8% lower efficiency** compared to normal machines 
-(27.76 vs 38.45). These machines operate with **high RPM + low torque**, wasting energy. 
-Annual cost impact: **~2.96M TL**.
-""")
+# TABS
+tab1, tab2, tab3, tab4 = st.tabs(["📊 Overview", "🔧 Machine Analysis", "🗄️ SQL Queries", "🤖 ML Model"])
 
+# [TAB 1, 2, 3, 4 kodu çok uzun - devam ediyor...]
 
 # TABS
 tab1, tab2, tab3, tab4 = st.tabs([
@@ -208,7 +269,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🗄️ SQL Queries", 
     "🤖 ML Model"
 ])
-
 
 
 # ═══════════════════════════════════════════════════
