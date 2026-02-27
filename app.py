@@ -461,7 +461,7 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # ────────────────────────────────────────────────
+   # ────────────────────────────────────────────────
     # ROW 3: Correlation Scatter
     # ────────────────────────────────────────────────
     col1, col2 = st.columns(2)
@@ -470,35 +470,41 @@ with tab1:
         st.markdown("#### RPM — Efficiency Correlation")
         st.caption("High RPM = Low Efficiency")
         
-        # Sample for performance
-        normal_sample = df[df['high_risk_rpm']==0].sample(min(500, len(df[df['high_risk_rpm']==0])))
-        highrisk_sample = df[df['high_risk_rpm']==1]
+        # Get all data (don't sample - we need to see the pattern!)
+        normal_data = df[df['high_risk_rpm']==0]
+        highrisk_data = df[df['high_risk_rpm']==1]
         
         fig6 = go.Figure()
         
-        fig6.add_trace(go.Scatter(
-            x=normal_sample['Rotational speed [rpm]'],
-            y=normal_sample['efficiency_score'],
+        # Add normal machines
+        fig6.add_trace(go.Scattergl(  # Use Scattergl for better performance
+            x=normal_data['Rotational speed [rpm]'],
+            y=normal_data['efficiency_score'],
             mode='markers',
-            name=f'Normal ({len(normal_sample)})',
+            name=f'Normal ({len(normal_data):,})',
             marker=dict(
-                color='rgba(56,189,248,0.4)',
-                size=4,
-                line=dict(width=0)
-            )
+                color='#38bdf8',  # Solid color
+                size=3,
+                opacity=0.4
+            ),
+            hovertemplate='<b>Normal</b><br>RPM: %{x:.0f}<br>Efficiency: %{y:.2f}<extra></extra>'
         ))
-        fig6.add_trace(go.Scatter(
-            x=highrisk_sample['Rotational speed [rpm]'],
-            y=highrisk_sample['efficiency_score'],
+        
+        # Add high-risk machines
+        fig6.add_trace(go.Scattergl(
+            x=highrisk_data['Rotational speed [rpm]'],
+            y=highrisk_data['efficiency_score'],
             mode='markers',
-            name=f'High-Risk ({len(highrisk_sample)})',
+            name=f'High-Risk ({len(highrisk_data):,})',
             marker=dict(
-                color='rgba(248,113,113,0.7)',
+                color='#f87171',  # Solid color
                 size=5,
-                symbol='diamond',
-                line=dict(width=0.5, color='white')
-            )
+                opacity=0.8,
+                symbol='diamond'
+            ),
+            hovertemplate='<b>High-Risk</b><br>RPM: %{x:.0f}<br>Efficiency: %{y:.2f}<extra></extra>'
         ))
+        
         fig6.update_layout(
             height=300,
             plot_bgcolor='#0d1117',
@@ -506,7 +512,7 @@ with tab1:
             font=dict(color='#cdd9e5', size=10),
             xaxis=dict(
                 gridcolor='#1e2738',
-                title='RPM',
+                title='Rotational Speed (RPM)',
                 color='#cdd9e5',
                 range=[1000, 3000]
             ),
@@ -519,9 +525,11 @@ with tab1:
             legend=dict(
                 orientation='h',
                 y=-0.25,
-                font=dict(color='#cdd9e5')
+                x=0.5,
+                xanchor='center',
+                font=dict(color='#cdd9e5', size=9)
             ),
-            margin=dict(l=40, r=20, t=20, b=60),
+            margin=dict(l=50, r=20, t=20, b=70),
             hovermode='closest'
         )
         st.plotly_chart(fig6, use_container_width=True)
@@ -530,21 +538,31 @@ with tab1:
         st.markdown("#### Temperature Profile (Air vs Process)")
         st.caption("Kelvin distribution")
         
-        temp_sample = df.sample(min(500, len(df)))
-        
+        # Get all temperature data
         fig7 = go.Figure()
-        fig7.add_trace(go.Scatter(
-            x=temp_sample['Air temperature [K]'],
-            y=temp_sample['Process temperature [K]'],
+        fig7.add_trace(go.Scattergl(
+            x=df['Air temperature [K]'],
+            y=df['Process temperature [K]'],
             mode='markers',
             marker=dict(
-                color='rgba(251,146,60,0.5)',
-                size=4,
-                line=dict(width=0)
+                color='#fb923c',  # Solid orange
+                size=3,
+                opacity=0.4
             ),
-            name='Temperature',
-            showlegend=False
+            showlegend=False,
+            hovertemplate='Air: %{x:.1f}K<br>Process: %{y:.1f}K<extra></extra>'
         ))
+        
+        # Add diagonal reference line
+        fig7.add_trace(go.Scatter(
+            x=[294, 304],
+            y=[294, 304],
+            mode='lines',
+            line=dict(color='rgba(255,255,255,0.2)', width=1, dash='dash'),
+            showlegend=False,
+            hoverinfo='skip'
+        ))
+        
         fig7.update_layout(
             height=300,
             plot_bgcolor='#0d1117',
@@ -552,18 +570,17 @@ with tab1:
             font=dict(color='#cdd9e5', size=10),
             xaxis=dict(
                 gridcolor='#1e2738',
-                title='Air Temp (K)',
+                title='Air Temperature (K)',
                 color='#cdd9e5',
                 range=[294, 305]
             ),
             yaxis=dict(
                 gridcolor='#1e2738',
-                title='Process Temp (K)',
+                title='Process Temperature (K)',
                 color='#cdd9e5',
                 range=[304, 314]
             ),
-            margin=dict(l=40, r=20, t=20, b=40),
+            margin=dict(l=50, r=20, t=20, b=50),
             hovermode='closest'
         )
         st.plotly_chart(fig7, use_container_width=True)
-
