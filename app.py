@@ -472,44 +472,43 @@ with tab1:
         st.markdown("#### RPM — Efficiency Correlation")
         st.caption("High RPM = Low Efficiency")
         
-        # Sample for performance (if dataset is large)
-        sample_size = min(2000, len(df))
-        normal_data = df[df['high_risk_rpm']==0].sample(min(sample_size, len(df[df['high_risk_rpm']==0])))
+        # Prepare data
+        normal_data = df[df['high_risk_rpm']==0].sample(min(1500, len(df[df['high_risk_rpm']==0])))
         highrisk_data = df[df['high_risk_rpm']==1]
         
         fig6 = go.Figure()
         
-        # Add normal machines
-        fig6.add_trace(go.Scatter(  # ✅ Changed from Scattergl
+        # Normal machines - LARGER & MORE VISIBLE
+        fig6.add_trace(go.Scatter(
             x=normal_data['Rotational speed [rpm]'],
             y=normal_data['efficiency_score'],
             mode='markers',
             name=f'Normal ({len(normal_data):,})',
             marker=dict(
-                color='#38bdf8',
-                size=3,
-                opacity=0.5
+                color='rgba(56,189,248,0.6)',  # More opaque
+                size=5,  # Larger
+                line=dict(width=0)
             ),
             hovertemplate='<b>Normal</b><br>RPM: %{x:.0f}<br>Efficiency: %{y:.2f}<extra></extra>'
         ))
         
-        # Add high-risk machines
-        fig6.add_trace(go.Scatter(  # ✅ Changed from Scattergl
+        # High-risk machines - VERY VISIBLE
+        fig6.add_trace(go.Scatter(
             x=highrisk_data['Rotational speed [rpm]'],
             y=highrisk_data['efficiency_score'],
             mode='markers',
             name=f'High-Risk ({len(highrisk_data):,})',
             marker=dict(
-                color='#f87171',
-                size=6,
-                opacity=0.9,
-                symbol='diamond'
+                color='rgba(248,113,113,1)',  # Fully opaque
+                size=8,  # Much larger
+                symbol='diamond',
+                line=dict(width=1, color='white')
             ),
             hovertemplate='<b>High-Risk</b><br>RPM: %{x:.0f}<br>Efficiency: %{y:.2f}<extra></extra>'
         ))
         
         fig6.update_layout(
-            height=300,
+            height=320,
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
@@ -517,20 +516,23 @@ with tab1:
                 gridcolor='#1e2738',
                 title='Rotational Speed (RPM)',
                 color='#cdd9e5',
-                range=[1000, 3000]
+                range=[1000, 3000],
+                showgrid=True
             ),
             yaxis=dict(
                 gridcolor='#1e2738',
                 title='Efficiency Score',
                 color='#cdd9e5',
-                range=[15, 50]
+                range=[15, 50],
+                showgrid=True
             ),
             legend=dict(
                 orientation='h',
-                y=-0.25,
+                y=-0.2,
                 x=0.5,
                 xanchor='center',
-                font=dict(color='#cdd9e5', size=9)
+                font=dict(color='#cdd9e5', size=9),
+                bgcolor='rgba(13,17,23,0.8)'
             ),
             margin=dict(l=50, r=20, t=20, b=70),
             hovermode='closest'
@@ -541,35 +543,41 @@ with tab1:
         st.markdown("#### Temperature Profile (Air vs Process)")
         st.caption("Kelvin distribution")
         
-        # Sample for performance
-        temp_sample = df.sample(min(2000, len(df)))
+        # Sample data
+        temp_sample = df.sample(min(1500, len(df)))
         
         fig7 = go.Figure()
-        fig7.add_trace(go.Scatter(  # ✅ Changed from Scattergl
+        
+        # Temperature points - LARGER & MORE VISIBLE
+        fig7.add_trace(go.Scatter(
             x=temp_sample['Air temperature [K]'],
             y=temp_sample['Process temperature [K]'],
             mode='markers',
             marker=dict(
-                color='#fb923c',
-                size=3,
-                opacity=0.5
+                color='rgba(251,146,60,0.7)',  # More opaque
+                size=5,  # Larger
+                line=dict(width=0)
             ),
             showlegend=False,
             hovertemplate='Air: %{x:.1f}K<br>Process: %{y:.1f}K<extra></extra>'
         ))
         
-        # Add diagonal reference line
+        # Diagonal reference line - MORE VISIBLE
         fig7.add_trace(go.Scatter(
-            x=[294, 305],
-            y=[294, 305],
+            x=[293, 305],
+            y=[303, 315],
             mode='lines',
-            line=dict(color='rgba(255,255,255,0.2)', width=1, dash='dash'),
+            line=dict(
+                color='rgba(255,255,255,0.3)',  # Brighter
+                width=2,  # Thicker
+                dash='dash'
+            ),
             showlegend=False,
             hoverinfo='skip'
         ))
         
         fig7.update_layout(
-            height=300,
+            height=320,
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
@@ -577,13 +585,15 @@ with tab1:
                 gridcolor='#1e2738',
                 title='Air Temperature (K)',
                 color='#cdd9e5',
-                range=[294, 305]
+                range=[293, 305],
+                showgrid=True
             ),
             yaxis=dict(
                 gridcolor='#1e2738',
                 title='Process Temperature (K)',
                 color='#cdd9e5',
-                range=[304, 314]
+                range=[303, 315],
+                showgrid=True
             ),
             margin=dict(l=50, r=20, t=20, b=50),
             hovermode='closest'
