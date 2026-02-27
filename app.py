@@ -209,6 +209,35 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🤖 ML Model"
 ])
 
+# WELCOME COVER
+st.markdown("""
+<div style="
+    background:#000; padding:60px 40px; text-align:center;
+    border-bottom: 4px solid;
+    border-image: linear-gradient(90deg, transparent, #ff8c00, #ffaa00, #ff8c00, transparent) 1;
+    margin-bottom: 32px;
+">
+    <div style="font-size:64px;margin-bottom:8px;filter:drop-shadow(0 4px 20px rgba(255,165,0,0.5))">⚡</div>
+    <div style="font-size:11px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:20px">Industrial Data Science</div>
+    <div style="font-size:38px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;line-height:1.2;margin-bottom:12px">
+        Manufacturing Energy Efficiency<br>
+        <span style="color:#ffaa00">& Predictive Maintenance AI</span>
+    </div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.4);font-style:italic;margin-bottom:24px">
+        <span style="color:rgba(255,165,0,0.8);font-style:normal;font-weight:600">"Strategic Insights & Performance Tracking"</span>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <span style="padding:4px 12px;border:1px solid rgba(255,140,0,0.4);color:rgba(255,140,0,0.7);font-size:9px;letter-spacing:2px;text-transform:uppercase">Python</span>
+        <span style="padding:4px 12px;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.3);font-size:9px;letter-spacing:2px;text-transform:uppercase">SQL</span>
+        <span style="padding:4px 12px;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.3);font-size:9px;letter-spacing:2px;text-transform:uppercase">Random Forest</span>
+        <span style="padding:4px 12px;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.3);font-size:9px;letter-spacing:2px;text-transform:uppercase">Streamlit</span>
+    </div>
+    <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:2px;text-transform:uppercase">
+        N. Nur Altay · Data Analyst · Portfolio Project
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 
 
 # ═══════════════════════════════════════════════════
