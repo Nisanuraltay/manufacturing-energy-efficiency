@@ -209,7 +209,13 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🤖 ML Model"
 ])
 
-# WELCOME COVER
+
+
+# ═══════════════════════════════════════════════════
+# TAB 1: OVERVIEW  
+# ═══════════════════════════════════════════════════
+with tab1:
+    # WELCOME COVER
 st.markdown("""
 <div style="
     background:#000; padding:60px 40px; text-align:center;
@@ -238,13 +244,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-
-# ═══════════════════════════════════════════════════
-# TAB 1: OVERVIEW  
-# ═══════════════════════════════════════════════════
-with tab1:
-    
     # ────────────────────────────────────────────────
     # ROW 1: RPM Distribution + Failure Pie
     # ────────────────────────────────────────────────
