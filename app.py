@@ -82,7 +82,7 @@ st.markdown("""
 def load_data():
     # BURAYA SENİN CSV YOLUNU KOY
     # GitHub'daysa: 
-    df = pd.read_csv('https://raw.githubusercontent.com/Nisanuraltay/manufacturing-energy-efficiency/main/data/predictive_maintenance.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/Nisanuraltay/manufacturing-energy-efficiency/main/data/predictive_maintenance_final_data.csv')
     
     # Data preparation (Notebook 2'den)
     df['Rotational speed [rpm]'] = df['Rotational speed [rpm]'].astype(float)
@@ -728,11 +728,7 @@ with tab2:
             values=energy_counts.values,
             hole=0.6,
             marker=dict(
-                colors={
-                    'Low': 'rgba(248,113,113,0.7)',
-                    'Medium': 'rgba(56,189,248,0.7)',
-                    'High': 'rgba(74,222,128,0.7)'
-                },
+                colors=['rgba(248,113,113,0.7)', 'rgba(56,189,248,0.7)', 'rgba(74,222,128,0.7)'],
                 line=dict(color='#07090f', width=2)
             ),
             textposition='inside',
