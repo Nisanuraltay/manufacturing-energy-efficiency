@@ -220,50 +220,76 @@ tab1, tab2, tab3, tab4 = st.tabs([
 
 
 # ═══════════════════════════════════════════════════
-# TAB 1: OVERVIEW
+# TAB 1: OVERVIEW  
 # ═══════════════════════════════════════════════════
 with tab1:
     
+    # ────────────────────────────────────────────────
     # ROW 1: RPM Distribution + Failure Pie
+    # ────────────────────────────────────────────────
     col1, col2 = st.columns([3, 2])
     
     with col1:
         st.markdown("#### RPM Distribution — Normal vs High-Risk")
         st.caption("IQR method · Threshold: 1139–1895 RPM")
         
-        # RPM histogram data
-        normal_rpm_data = df[df['high_risk_rpm']==0]['Rotational speed [rpm]']
-        highrisk_rpm_data = df[df['high_risk_rpm']==1]['Rotational speed [rpm]']
+        # Create bins manually
+        bins = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000]
+        bin_labels = ['1000-1200', '1200-1400', '1400-1600', '1600-1800', 
+                     '1800-2000', '2000-2200', '2200-2400', '2400-2600', 
+                     '2600-2800', '2800-3000']
+        
+        # Count machines in each bin
+        normal_counts = []
+        highrisk_counts = []
+        
+        normal_rpm = df[df['high_risk_rpm']==0]['Rotational speed [rpm]']
+        highrisk_rpm = df[df['high_risk_rpm']==1]['Rotational speed [rpm]']
+        
+        for i in range(len(bins)-1):
+            normal_counts.append(((normal_rpm >= bins[i]) & (normal_rpm < bins[i+1])).sum())
+            highrisk_counts.append(((highrisk_rpm >= bins[i]) & (highrisk_rpm < bins[i+1])).sum())
         
         fig1 = go.Figure()
-        fig1.add_trace(go.Histogram(
-            x=normal_rpm_data,
-            name='Normal (9,582)',
-            nbinsx=15,
+        fig1.add_trace(go.Bar(
+            name=f'Normal ({len(normal_rpm):,})',
+            x=bin_labels,
+            y=normal_counts,
             marker_color='rgba(56,189,248,0.3)',
             marker_line_color='rgba(56,189,248,1)',
-            marker_line_width=1.5,
-            opacity=0.7
+            marker_line_width=1.5
         ))
-        fig1.add_trace(go.Histogram(
-            x=highrisk_rpm_data,
-            name='High-Risk (418)',
-            nbinsx=15,
+        fig1.add_trace(go.Bar(
+            name=f'High-Risk ({len(highrisk_rpm):,})',
+            x=bin_labels,
+            y=highrisk_counts,
             marker_color='rgba(248,113,113,0.3)',
             marker_line_color='rgba(248,113,113,1)',
-            marker_line_width=1.5,
-            opacity=0.7
+            marker_line_width=1.5
         ))
         fig1.update_layout(
-            barmode='overlay',
+            barmode='group',
             height=350,
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
-            xaxis=dict(gridcolor='#1e2738', title='RPM', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
-            legend=dict(orientation='h', y=-0.15, font=dict(color='#cdd9e5')),
-            margin=dict(l=40, r=20, t=20, b=60)
+            xaxis=dict(
+                gridcolor='#1e2738',
+                title='RPM Range',
+                color='#cdd9e5',
+                tickangle=-45
+            ),
+            yaxis=dict(
+                gridcolor='#1e2738',
+                title='Machine Count',
+                color='#cdd9e5'
+            ),
+            legend=dict(
+                orientation='h',
+                y=-0.25,
+                font=dict(color='#cdd9e5')
+            ),
+            margin=dict(l=40, r=20, t=20, b=80)
         )
         st.plotly_chart(fig1, use_container_width=True)
     
@@ -294,14 +320,21 @@ with tab1:
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=9),
             showlegend=True,
-            legend=dict(orientation='v', x=1.1, y=0.5, font=dict(size=8, color='#cdd9e5')),
-            margin=dict(l=20, r=100, t=20, b=20)
+            legend=dict(
+                orientation='v',
+                x=1.05,
+                y=0.5,
+                font=dict(size=8, color='#cdd9e5')
+            ),
+            margin=dict(l=20, r=120, t=20, b=20)
         )
         st.plotly_chart(fig2, use_container_width=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
+    # ────────────────────────────────────────────────
     # ROW 2: Type + Efficiency + Priority
+    # ────────────────────────────────────────────────
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -342,8 +375,8 @@ with tab1:
             font=dict(color='#cdd9e5', size=10),
             xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
             yaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-            legend=dict(orientation='h', y=-0.2, font=dict(color='#cdd9e5')),
-            margin=dict(l=40, r=20, t=20, b=50)
+            legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
+            margin=dict(l=40, r=20, t=20, b=60)
         )
         st.plotly_chart(fig3, use_container_width=True)
     
@@ -372,7 +405,12 @@ with tab1:
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
             xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', range=[0, 45], color='#cdd9e5', title='Efficiency Score'),
+            yaxis=dict(
+                gridcolor='#1e2738',
+                range=[0, 45],
+                color='#cdd9e5',
+                title='Efficiency Score'
+            ),
             showlegend=False,
             margin=dict(l=40, r=20, t=20, b=40)
         )
@@ -382,7 +420,6 @@ with tab1:
         st.markdown("#### Optimization Priority Distribution")
         st.caption("Score 0–5 · 418 critical (4-5)")
         
-        # Ensure all priority levels exist
         priority_counts = df['optimization_priority'].value_counts().reindex(range(6), fill_value=0).sort_index()
         
         colors = ['rgba(74,222,128,0.3)'] * 2 + ['rgba(251,191,36,0.3)'] * 2 + ['rgba(248,113,113,0.3)'] * 2
@@ -405,8 +442,16 @@ with tab1:
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
-            xaxis=dict(gridcolor='#1e2738', title='Priority', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', title='Count', color='#cdd9e5'),
+            xaxis=dict(
+                gridcolor='#1e2738',
+                title='Priority',
+                color='#cdd9e5'
+            ),
+            yaxis=dict(
+                gridcolor='#1e2738',
+                title='Count',
+                color='#cdd9e5'
+            ),
             showlegend=False,
             margin=dict(l=40, r=20, t=20, b=40)
         )
@@ -416,16 +461,17 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
+    # ────────────────────────────────────────────────
     # ROW 3: Correlation Scatter
+    # ────────────────────────────────────────────────
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("#### RPM — Efficiency Correlation")
         st.caption("High RPM = Low Efficiency")
         
-        # Sample data for performance
-        sample_size = min(1000, len(df))
-        normal_sample = df[df['high_risk_rpm']==0].sample(min(sample_size, len(df[df['high_risk_rpm']==0])))
+        # Sample for performance
+        normal_sample = df[df['high_risk_rpm']==0].sample(min(500, len(df[df['high_risk_rpm']==0])))
         highrisk_sample = df[df['high_risk_rpm']==1]
         
         fig6 = go.Figure()
@@ -434,10 +480,10 @@ with tab1:
             x=normal_sample['Rotational speed [rpm]'],
             y=normal_sample['efficiency_score'],
             mode='markers',
-            name='Normal',
+            name=f'Normal ({len(normal_sample)})',
             marker=dict(
-                color='rgba(56,189,248,0.5)',
-                size=5,
+                color='rgba(56,189,248,0.4)',
+                size=4,
                 line=dict(width=0)
             )
         ))
@@ -445,10 +491,11 @@ with tab1:
             x=highrisk_sample['Rotational speed [rpm]'],
             y=highrisk_sample['efficiency_score'],
             mode='markers',
-            name='High-Risk',
+            name=f'High-Risk ({len(highrisk_sample)})',
             marker=dict(
-                color='rgba(248,113,113,0.8)',
-                size=6,
+                color='rgba(248,113,113,0.7)',
+                size=5,
+                symbol='diamond',
                 line=dict(width=0.5, color='white')
             )
         ))
@@ -457,10 +504,24 @@ with tab1:
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
-            xaxis=dict(gridcolor='#1e2738', title='RPM', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', title='Efficiency', color='#cdd9e5'),
-            legend=dict(orientation='h', y=-0.2, font=dict(color='#cdd9e5')),
-            margin=dict(l=40, r=20, t=20, b=50),
+            xaxis=dict(
+                gridcolor='#1e2738',
+                title='RPM',
+                color='#cdd9e5',
+                range=[1000, 3000]
+            ),
+            yaxis=dict(
+                gridcolor='#1e2738',
+                title='Efficiency Score',
+                color='#cdd9e5',
+                range=[15, 50]
+            ),
+            legend=dict(
+                orientation='h',
+                y=-0.25,
+                font=dict(color='#cdd9e5')
+            ),
+            margin=dict(l=40, r=20, t=20, b=60),
             hovermode='closest'
         )
         st.plotly_chart(fig6, use_container_width=True)
@@ -469,12 +530,12 @@ with tab1:
         st.markdown("#### Temperature Profile (Air vs Process)")
         st.caption("Kelvin distribution")
         
-        sample_temp = df.sample(min(1000, len(df)))
+        temp_sample = df.sample(min(500, len(df)))
         
         fig7 = go.Figure()
         fig7.add_trace(go.Scatter(
-            x=sample_temp['Air temperature [K]'],
-            y=sample_temp['Process temperature [K]'],
+            x=temp_sample['Air temperature [K]'],
+            y=temp_sample['Process temperature [K]'],
             mode='markers',
             marker=dict(
                 color='rgba(251,146,60,0.5)',
@@ -489,11 +550,20 @@ with tab1:
             plot_bgcolor='#0d1117',
             paper_bgcolor='#0d1117',
             font=dict(color='#cdd9e5', size=10),
-            xaxis=dict(gridcolor='#1e2738', title='Air Temp (K)', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', title='Process Temp (K)', color='#cdd9e5'),
+            xaxis=dict(
+                gridcolor='#1e2738',
+                title='Air Temp (K)',
+                color='#cdd9e5',
+                range=[294, 305]
+            ),
+            yaxis=dict(
+                gridcolor='#1e2738',
+                title='Process Temp (K)',
+                color='#cdd9e5',
+                range=[304, 314]
+            ),
             margin=dict(l=40, r=20, t=20, b=40),
             hovermode='closest'
         )
         st.plotly_chart(fig7, use_container_width=True)
-
 
