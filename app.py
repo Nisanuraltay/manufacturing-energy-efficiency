@@ -80,32 +80,25 @@ st.markdown("""
 # Load REAL data
 @st.cache_data
 def load_data():
-    # BURAYA SENİN CSV YOLUNU KOY
-    # GitHub'daysa: 
-    df = pd.read_csv('https://raw.githubusercontent.com/Nisanuraltay/manufacturing-energy-efficiency/main/data/predictive_maintenance_final_data.csv')
+    # Streamlit Cloud'da repo içindeki dosyayı doğrudan oku
+    df = pd.read_csv('data/predictive_maintenance_final_data.csv')
     
-    # Data preparation (Notebook 2'den)
     df['Rotational speed [rpm]'] = df['Rotational speed [rpm]'].astype(float)
     df['Torque [Nm]'] = df['Torque [Nm]'].astype(float)
     df['Tool wear [min]'] = df['Tool wear [min]'].astype(float)
     df['Target'] = df['Target'].astype(float)
-    
-    # Temperature
     df['temp_difference'] = df['Process temperature [K]'] - df['Air temperature [K]']
     
-    # High-risk label
     rpm = df['Rotational speed [rpm]']
     Q1, Q3 = rpm.quantile(0.25), rpm.quantile(0.75)
     IQR = Q3 - Q1
     df['high_risk_rpm'] = ((rpm < Q1 - 1.5*IQR) | (rpm > Q3 + 1.5*IQR)).astype(int)
     
-    # Metrics
     df['power_consumption_kw'] = ((df['Rotational speed [rpm]'] / 1000) * 
                                    (df['Torque [Nm]'] / 100) * 1.73)
     df['efficiency_score'] = df['Torque [Nm]'] / df['power_consumption_kw']
     df['cost_per_hour_tl'] = df['power_consumption_kw'] * 1.2
     
-    # Priority
     def calc_priority(row):
         score = 0
         if row['high_risk_rpm'] == 1: score += 2
@@ -114,7 +107,6 @@ def load_data():
         return min(score, 5)
     
     df['optimization_priority'] = df.apply(calc_priority, axis=1)
-    
     return df
 
 df = load_data()
