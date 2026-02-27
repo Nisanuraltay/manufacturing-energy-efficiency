@@ -690,7 +690,7 @@ with tab2:
         )
         st.plotly_chart(fig_hr, use_container_width=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     # ────────────────────────────────────────────────
     # ROW 2: Energy Category + Tool Wear
