@@ -461,7 +461,7 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-   # ────────────────────────────────────────────────
+# ────────────────────────────────────────────────
     # ROW 3: Correlation Scatter
     # ────────────────────────────────────────────────
     col1, col2 = st.columns(2)
@@ -583,4 +583,4 @@ with tab1:
             margin=dict(l=50, r=20, t=20, b=50),
             hovermode='closest'
         )
-        st.plotly_chart(fig7, use_container_width=True)
+        st.plotly_chart(fig7, use_container_width=True)True)
