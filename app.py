@@ -1085,7 +1085,6 @@ with tab4:
             y=features,
             orientation='h',
             marker=dict(
-                color=[c.replace('#', 'rgba(') for c in colors_fi],
                 color=[f'rgba({int(c[1:3],16)},{int(c[3:5],16)},{int(c[5:7],16)},0.35)'
                        for c in colors_fi],
                 line=dict(color=colors_fi, width=2)
