@@ -599,3 +599,166 @@ with tab1:
             hovermode='closest'
         )
         st.plotly_chart(fig7, use_container_width=True)
+
+
+
+
+# ═══════════════════════════════════════════════════
+# TAB 2: MACHINE ANALYSIS
+# ═══════════════════════════════════════════════════
+with tab2:
+    
+    # KPI Cards
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric(
+            label="🔴 High-Risk Machines",
+            value="418",
+            delta="4.18% of fleet"
+        )
+    
+    with col2:
+        st.metric(
+            label="🟡 Bottom 10% (Inefficient)",
+            value="1,000",
+            delta="20.5% lower efficiency"
+        )
+    
+    with col3:
+        st.metric(
+            label="💰 Max Annual Savings",
+            value="227K TL",
+            delta="50% failure reduction"
+        )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # High-Risk Segmentation Table
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("#### High-Risk Machine — Type Segmentation")
+        st.caption("Failure rate and cost analysis")
+        
+        # Create summary table
+        highrisk_summary = pd.DataFrame({
+            'Type': ['L-Type', 'M-Type', 'H-Type'],
+            'Count': [256, 125, 37],
+            'Avg RPM': [2103, 2098, 2109],
+            'Avg Efficiency': [27.76, 27.79, 27.62],
+            'Failure Rate': ['8.6%', '9.6%', '2.7%'],
+            'Annual Cost': ['₺1,817,431', '₺884,486', '₺258,766']
+        })
+        
+        st.dataframe(
+            highrisk_summary,
+            hide_index=True,
+            use_container_width=True,
+            height=180
+        )
+        
+        st.info("⚡ **Priority:** L-type (volume), M-type (risk 9.6%), H-type (low risk)")
+    
+    with col2:
+        st.markdown("#### High-Risk Distribution by Type")
+        st.caption("418 machines breakdown")
+        
+        highrisk_by_type = df[df['high_risk_rpm']==1]['Type'].value_counts()
+        
+        fig_hr = go.Figure()
+        fig_hr.add_trace(go.Bar(
+            x=['L-Type', 'M-Type', 'H-Type'],
+            y=highrisk_by_type.values,
+            marker=dict(
+                color=['rgba(248,113,113,0.3)', 'rgba(251,146,60,0.3)', 'rgba(56,189,248,0.3)'],
+                line=dict(color=['#f87171', '#fb923c', '#38bdf8'], width=2)
+            ),
+            text=highrisk_by_type.values,
+            textposition='outside',
+            textfont=dict(color='#cdd9e5', size=14)
+        ))
+        fig_hr.update_layout(
+            height=280,
+            plot_bgcolor='#0d1117',
+            paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+            yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
+            showlegend=False,
+            margin=dict(l=50, r=20, t=20, b=40)
+        )
+        st.plotly_chart(fig_hr, use_container_width=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Row 2: Energy Category + Tool Wear
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### Energy Category Distribution")
+        st.caption("Power consumption segmentation")
+        
+        # Create energy categories
+        energy_cats = pd.cut(
+            df['power_consumption_kw'],
+            bins=[0, 0.8, 1.2, 5],
+            labels=['Low', 'Medium', 'High']
+        )
+        energy_counts = energy_cats.value_counts()
+        
+        fig_energy = go.Figure(data=[go.Pie(
+            labels=energy_counts.index,
+            values=energy_counts.values,
+            hole=0.6,
+            marker=dict(
+                colors=['rgba(74,222,128,0.7)', 'rgba(56,189,248,0.7)', 'rgba(248,113,113,0.7)'],
+                line=dict(color='#07090f', width=2)
+            ),
+            textposition='inside',
+            textinfo='label+percent',
+            textfont=dict(size=11, color='#cdd9e5')
+        )])
+        fig_energy.update_layout(
+            height=300,
+            plot_bgcolor='#0d1117',
+            paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            showlegend=False,
+            margin=dict(l=20, r=20, t=20, b=20)
+        )
+        st.plotly_chart(fig_energy, use_container_width=True)
+        
+        st.caption("⚠️ Note: 97.6% of high-risk are 'Low' due to misleading formula (low torque)")
+    
+    with col2:
+        st.markdown("#### Tool Wear Distribution")
+        st.caption("Average: 107.95 minutes")
+        
+        wear_bins = pd.cut(df['Tool wear [min]'], bins=5)
+        wear_counts = wear_bins.value_counts().sort_index()
+        
+        fig_wear = go.Figure()
+        fig_wear.add_trace(go.Bar(
+            x=[str(x) for x in wear_counts.index],
+            y=wear_counts.values,
+            marker_color='rgba(251,146,60,0.3)',
+            marker_line_color='#fb923c',
+            marker_line_width=1.5
+        ))
+        fig_wear.update_layout(
+            height=300,
+            plot_bgcolor='#0d1117',
+            paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            xaxis=dict(
+                gridcolor='#1e2738',
+                title='Tool Wear Range (min)',
+                color='#cdd9e5',
+                tickangle=-45
+            ),
+            yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
+            showlegend=False,
+            margin=dict(l=50, r=20, t=20, b=80)
+        )
+        st.plotly_chart(fig_wear, use_container_width=True)
