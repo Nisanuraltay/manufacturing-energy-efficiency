@@ -109,6 +109,31 @@ if st.session_state.page == 'cover':
 # DASHBOARD
 # ═══════════════════════════════════════════════════
 
+# DARK TEMA CSS - TÜM TABLAR İÇİN
+st.markdown("""
+<style>
+.stApp { background: #07090f !important; color: #cdd9e5 !important; }
+section[data-testid="stMain"] { background: #07090f !important; }
+.block-container { background: #07090f !important; padding-top: 2rem; }
+[data-testid="metric-container"] { background: #0d1117 !important; border: 1px solid #1e2738 !important; border-radius: 10px !important; padding: 16px !important; }
+[data-testid="stMetricValue"] { color: #cdd9e5 !important; }
+[data-testid="stMetricLabel"] { color: #4a6072 !important; }
+.stTabs [data-baseweb="tab-list"] { background: #0d1117 !important; border: 1px solid #1e2738 !important; border-radius: 8px !important; }
+.stTabs [data-baseweb="tab"] { color: #4a6072 !important; }
+.stTabs [aria-selected="true"] { background: #161b24 !important; color: #cdd9e5 !important; }
+.stTabs [data-baseweb="tab-panel"] { background: #07090f !important; }
+[data-testid="stExpander"] { background: #0d1117 !important; border: 1px solid #1e2738 !important; border-radius: 10px !important; }
+summary { color: #cdd9e5 !important; }
+pre { background: #0d1117 !important; color: #cdd9e5 !important; }
+p, h1, h2, h3, h4, label { color: #cdd9e5 !important; }
+.stCaption { color: #4a6072 !important; }
+[data-testid="stAlert"] { background: #0d1117 !important; }
+footer { display: none !important; }
+::-webkit-scrollbar { width: 6px; background: #07090f; }
+::-webkit-scrollbar-thumb { background: #1e2738; border-radius: 3px; }
+</style>
+""", unsafe_allow_html=True)
+
 df = load_data()
 
 # HEADER
