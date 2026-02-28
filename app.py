@@ -679,37 +679,37 @@ with col1:
         
     for i in range(len(bins)-1):
         normal_counts.append(((normal_rpm >= bins[i]) & (normal_rpm < bins[i+1])).sum())
-         highrisk_counts.append(((highrisk_rpm >= bins[i]) & (highrisk_rpm < bins[i+1])).sum())
+        highrisk_counts.append(((highrisk_rpm >= bins[i]) & (highrisk_rpm < bins[i+1])).sum())
         
     fig1 = go.Figure()
     fig1.add_trace(go.Bar(
-         name=f'Normal ({len(normal_rpm):,})',
+        name=f'Normal ({len(normal_rpm):,})',
         x=bin_labels, y=normal_counts,
         marker_color='rgba(56,189,248,0.3)',
         marker_line_color='rgba(56,189,248,1)',
-         marker_line_width=1.5
+        marker_line_width=1.5
     ))
     fig1.add_trace(go.Bar(
-         name=f'High-Risk ({len(highrisk_rpm):,})',
-         x=bin_labels, y=highrisk_counts,
+        name=f'High-Risk ({len(highrisk_rpm):,})',
+        x=bin_labels, y=highrisk_counts,
         marker_color='rgba(248,113,113,0.3)',
-         marker_line_color='rgba(248,113,113,1)',
-         marker_line_width=1.5
+        marker_line_color='rgba(248,113,113,1)',
+        marker_line_width=1.5
      ))
     fig1.update_layout(
          barmode='group', height=350,
-        plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-        font=dict(color='#cdd9e5', size=10),
-          xaxis=dict(gridcolor='#1e2738', title='RPM Range', color='#cdd9e5', tickangle=-45),
-          yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
-          legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
-          margin=dict(l=40, r=20, t=20, b=80)
+         plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+         font=dict(color='#cdd9e5', size=10),
+         xaxis=dict(gridcolor='#1e2738', title='RPM Range', color='#cdd9e5', tickangle=-45),
+         yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
+         legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
+         margin=dict(l=40, r=20, t=20, b=80)
     )
      st.plotly_chart(fig1, use_container_width=True)
     
  with col2:
       st.markdown("#### Failure Type Distribution")
-     st.caption("348 total failure records")
+      st.caption("348 total failure records")
         
     failure_counts = df['Failure Type'].value_counts()
         
@@ -717,11 +717,11 @@ with col1:
          labels=failure_counts.index, values=failure_counts.values, hole=0.65,
          marker=dict(
               colors=['rgba(74,222,128,0.8)', 'rgba(251,146,60,0.8)', 
-                   'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)', 
-                      'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'],
+                    'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)', 
+                    'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'],
             line=dict(color='#07090f', width=2)
         ),
-         textposition='auto', textinfo='label+percent',
+          textposition='auto', textinfo='label+percent',
           textfont=dict(size=9, color='#cdd9e5'),
           hoverinfo='label+value+percent'
       )])
