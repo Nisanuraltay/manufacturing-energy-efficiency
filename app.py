@@ -762,7 +762,7 @@ with tab4:
             [0, 0, 0, 0, 212, 0],
             [0, 0, 0, 0, 0, 206]
         ]
-        fig_cm = go.Figure(data=go.Heatmap(z=confusion_data,x=['Pred 0','Pred 1','Pred 2','Pred 3','Pred 4','Pred 5'],y=['True 0','True 1','True 2','True 3','True 4','True 5'],colorscale='Blues',text=confusion_data,texttemplate='%{text}',textfont=dict(color='#fff',size=12),hoverongaps=False,showscale=True,colorbar=dict(title='Count',titlefont=dict(color='#cdd9e5'),tickfont=dict(color='#cdd9e5'))))
+        fig_cm = go.Figure(data=go.Heatmap(z=confusion_data,x=['Pred 0','Pred 1','Pred 2','Pred 3','Pred 4','Pred 5'],y=['True 0','True 1','True 2','True 3','True 4','True 5'],colorscale='Blues',text=confusion_data,texttemplate='%{text}',textfont=dict(color='#fff',size=12),hoverongaps=False,showscale=True,colorbar=dict(title=dict(text='Count',font=dict(color='#cdd9e5')),tickfont=dict(color='#cdd9e5'))))
         fig_cm.update_layout(height=380,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=11),xaxis=dict(side='bottom',color='#cdd9e5'),yaxis=dict(side='left',color='#cdd9e5'),margin=dict(l=60,r=60,t=20,b=60))
         st.plotly_chart(fig_cm, use_container_width=True)
         st.success("✅ **Perfect Classification:** All predictions fall on the diagonal — zero false positives and zero false negatives.")
