@@ -276,8 +276,9 @@ if st.session_state.page == 'executive':
         """, unsafe_allow_html=True)
 
     with col_right:
-        st.markdown("""
-        <div style="background:linear-gradient(135deg,#080d10,#0a1218);border:1px solid rgba(0,206,209,0.15);border-radius:14px;padding:24px">
+        components.html("""
+        <style>* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }</style>
+        <div style="background:linear-gradient(135deg,#080d10,#0a1218);border:1px solid rgba(0,206,209,0.15);border-radius:14px;padding:24px;height:100%">
             <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#00ced1;margin-bottom:10px;font-weight:700">KEY FINDINGS</div>
             <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:16px;line-height:1.3">What the Data<br><span style="color:#00ced1">Revealed</span></div>
 
@@ -285,21 +286,21 @@ if st.session_state.page == 'executive':
                 <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:10px">FLEET RISK BREAKDOWN</div>
                 <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
                     <span style="font-size:12px;color:rgba(255,255,255,0.6)">L-Type</span>
-                    <span style="font-size:12px;font-weight:700;color:#f87171">256 units · 8.6% fail · ₺1.82M/yr</span>
+                    <span style="font-size:12px;font-weight:700;color:#f87171">256 units · 8.6% fail · &#8378;1.82M/yr</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
                     <span style="font-size:12px;color:rgba(255,255,255,0.6)">M-Type</span>
-                    <span style="font-size:12px;font-weight:700;color:#fb923c">125 units · 9.6% fail · ₺884K/yr</span>
+                    <span style="font-size:12px;font-weight:700;color:#fb923c">125 units · 9.6% fail · &#8378;884K/yr</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;padding:7px 0">
                     <span style="font-size:12px;color:rgba(255,255,255,0.6)">H-Type</span>
-                    <span style="font-size:12px;font-weight:700;color:#4ade80">37 units · 2.7% fail · ₺259K/yr</span>
+                    <span style="font-size:12px;font-weight:700;color:#4ade80">37 units · 2.7% fail · &#8378;259K/yr</span>
                 </div>
             </div>
 
             <div style="display:flex;gap:8px;margin-bottom:10px">
                 <div style="flex:1;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:8px;padding:10px;text-align:center">
-                    <div style="font-size:18px;font-weight:900;color:#f87171">2.6×</div>
+                    <div style="font-size:18px;font-weight:900;color:#f87171">2.6x</div>
                     <div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Higher Failure Rate</div>
                 </div>
                 <div style="flex:1;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:8px;padding:10px;text-align:center">
@@ -314,11 +315,11 @@ if st.session_state.page == 'executive':
 
             <div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:12px">
                 <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;margin-bottom:6px">ML MODEL OUTPUT</div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6">Random Forest classifier achieves <strong style="color:#a78bfa">100% accuracy</strong> in priority scoring (0–5 scale). RPM is the #1 feature at 42% importance. Model is <strong style="color:#4ade80">production-ready</strong>.</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6">Random Forest achieves <strong style="color:#a78bfa">100% accuracy</strong> in priority scoring (0-5 scale). RPM is the #1 feature at 42% importance. Model is <strong style="color:#4ade80">production-ready</strong>.</div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
-
+        """, height=420)
+        
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
     # Action plan
