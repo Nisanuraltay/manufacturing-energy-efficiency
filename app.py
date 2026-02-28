@@ -118,7 +118,15 @@ p, h1, h2, h3, h4, label { color: #cdd9e5 !important; }
 
 /* ── Multiselect ── */
 [data-baseweb="select"] { background: #0d1117 !important; border-color: #1e2738 !important; }
-[data-baseweb="tag"] { background: rgba(0,206,209,0.15) !important; color: #00ced1 !important; }
+[data-baseweb="select"] > div { background: #0d1117 !important; border-color: #1e2738 !important; }
+[data-baseweb="popover"] { background: #0d1117 !important; }
+[data-baseweb="menu"] { background: #0d1117 !important; }
+[data-baseweb="option"] { background: #0d1117 !important; color: #cdd9e5 !important; }
+[data-baseweb="option"]:hover { background: #161b24 !important; }
+[data-baseweb="tag"] { background: rgba(0,206,209,0.15) !important; color: #00ced1 !important; border-color: rgba(0,206,209,0.3) !important; }
+/* multiselect input area */
+div[data-baseweb="select"] span { color: #cdd9e5 !important; }
+.stMultiSelect [data-baseweb="select"] > div:first-child { background: #161b24 !important; border: 1px solid #1e2738 !important; border-radius: 8px !important; }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; background: #07090f; }
@@ -325,7 +333,7 @@ if st.session_state.page == 'executive':
     </div>
 </div>
 </body></html>
-        """, height=460, scrolling=False)
+        """, height=520, scrolling=False)
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
@@ -379,10 +387,9 @@ df = load_data()
 # ── Sidebar ──
 with st.sidebar:
     st.markdown("""
-    <div style="padding:20px 16px 14px;border-bottom:1px solid rgba(0,206,209,0.12)">
-        <div style="font-size:20px;margin-bottom:4px">⚡</div>
-        <div style="font-size:13px;font-weight:800;color:#00ced1;letter-spacing:0.5px">Energy Dashboard</div>
-        <div style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:2px;text-transform:uppercase;margin-top:2px">N. Nur Altay · Feb 2026</div>
+    <div style="padding:20px 16px 16px;border-bottom:1px solid rgba(0,206,209,0.12);background:linear-gradient(135deg,#0a0e1a,#0d1525)">
+        <div style="font-size:26px;margin-bottom:6px">⚡</div>
+        <div style="font-size:16px;font-weight:800;color:#00ced1;letter-spacing:0.5px;line-height:1.2">Energy<br>Dashboard</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -561,8 +568,8 @@ with tab2:
         st.markdown("#### High-Risk Distribution by Type")
         highrisk_by_type = dff[dff['high_risk_rpm']==1]['Type'].value_counts()
         fig_hr = go.Figure()
-        fig_hr.add_trace(go.Bar(x=['L-Type','M-Type','H-Type'],y=[highrisk_by_type.get('L',0),highrisk_by_type.get('M',0),highrisk_by_type.get('H',0)],marker=dict(color=['rgba(248,113,113,0.3)','rgba(251,146,60,0.3)','rgba(56,189,248,0.3)'],line=dict(color=['#f87171','#fb923c','#38bdf8'],width=2)),text=[highrisk_by_type.get('L',0),highrisk_by_type.get('M',0),highrisk_by_type.get('H',0)],textposition='outside',textfont=dict(color='#cdd9e5',size=14)))
-        fig_hr.update_layout(height=260,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Count',color='#cdd9e5'),showlegend=False,margin=dict(l=50,r=20,t=20,b=40))
+        fig_hr.add_trace(go.Bar(x=['L-Type','M-Type','H-Type'],y=[highrisk_by_type.get('L',0),highrisk_by_type.get('M',0),highrisk_by_type.get('H',0)],marker=dict(color=['rgba(248,113,113,0.3)','rgba(251,146,60,0.3)','rgba(56,189,248,0.3)'],line=dict(color=['#f87171','#fb923c','#38bdf8'],width=2)),text=[highrisk_by_type.get('L',0),highrisk_by_type.get('M',0),highrisk_by_type.get('H',0)],textposition='outside',textfont=dict(color='#cdd9e5',size=16,weight='bold')))
+        fig_hr.update_layout(height=280,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Count',color='#cdd9e5',range=[0,300]),showlegend=False,margin=dict(l=50,r=20,t=40,b=40))
         st.plotly_chart(fig_hr, use_container_width=True)
 
     col1,col2 = st.columns(2)
@@ -586,8 +593,8 @@ with tab2:
         wear_labels = ['0-50','50-100','100-150','150-200','200-253']
         wear_counts = dff['wear_bin'].value_counts().sort_index()
         fig_wear = go.Figure()
-        fig_wear.add_trace(go.Bar(x=wear_labels,y=[wear_counts.get(l,0) for l in wear_labels],marker_color='rgba(251,146,60,0.3)',marker_line_color='#fb923c',marker_line_width=2,text=[wear_counts.get(l,0) for l in wear_labels],textposition='outside',textfont=dict(color='#cdd9e5')))
-        fig_wear.update_layout(height=215,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',title='Tool Wear (min)',color='#cdd9e5',tickangle=-45),yaxis=dict(gridcolor='#1e2738',title='Count',color='#cdd9e5'),showlegend=False,margin=dict(l=50,r=20,t=20,b=80))
+        fig_wear.add_trace(go.Bar(x=wear_labels,y=[wear_counts.get(l,0) for l in wear_labels],marker_color='rgba(251,146,60,0.3)',marker_line_color='#fb923c',marker_line_width=2,text=[wear_counts.get(l,0) for l in wear_labels],textposition='outside',textfont=dict(color='#cdd9e5',size=13,weight='bold')))
+        fig_wear.update_layout(height=240,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',title='Tool Wear (min)',color='#cdd9e5',tickangle=-45),yaxis=dict(gridcolor='#1e2738',title='Count',color='#cdd9e5',range=[0,2800]),showlegend=False,margin=dict(l=50,r=20,t=40,b=80))
         st.plotly_chart(fig_wear, use_container_width=True)
 
 # ═══════════════════════════════════════════
@@ -640,20 +647,36 @@ GROUP BY Type;""", language="sql")
 
     col1,col2 = st.columns(2)
     with col1:
-        st.markdown("#### Annual Cost by Type (TL)")
+        st.markdown("#### Annual Energy Cost by Machine Type")
+        st.caption("Based on real power consumption data · cost_per_hour = power_kw × 1.2 TL/kWh")
         type_costs = df.groupby('Type')['cost_per_hour_tl'].sum()*24*365
         fig_sql1 = go.Figure()
-        fig_sql1.add_trace(go.Bar(x=['L-Type','M-Type','H-Type'],y=[type_costs.get('L',0),type_costs.get('M',0),type_costs.get('H',0)],marker=dict(color=['rgba(248,113,113,0.3)','rgba(251,191,36,0.3)','rgba(74,222,128,0.3)'],line=dict(color=['#f87171','#fbbf24','#4ade80'],width=2)),text=[f"₺{type_costs.get('L',0)/1e6:.1f}M",f"₺{type_costs.get('M',0)/1e6:.1f}M",f"₺{type_costs.get('H',0)/1e6:.1f}M"],textposition='outside',textfont=dict(color='#cdd9e5')))
-        fig_sql1.update_layout(height=280,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Cost (TL)',color='#cdd9e5'),showlegend=False,margin=dict(l=60,r=20,t=20,b=40))
+        fig_sql1.add_trace(go.Bar(
+            x=['L-Type','M-Type','H-Type'],
+            y=[type_costs.get('L',0),type_costs.get('M',0),type_costs.get('H',0)],
+            marker=dict(color=['rgba(248,113,113,0.3)','rgba(251,191,36,0.3)','rgba(74,222,128,0.3)'],line=dict(color=['#f87171','#fbbf24','#4ade80'],width=2)),
+            text=[f"₺{type_costs.get('L',0)/1e6:.1f}M/yr",f"₺{type_costs.get('M',0)/1e6:.1f}M/yr",f"₺{type_costs.get('H',0)/1e6:.1f}M/yr"],
+            textposition='outside',
+            textfont=dict(color='#cdd9e5',size=13,weight='bold')
+        ))
+        fig_sql1.update_layout(height=300,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Annual Cost (TL)',color='#cdd9e5',range=[0,type_costs.max()*1.25]),showlegend=False,margin=dict(l=60,r=20,t=40,b=40))
         st.plotly_chart(fig_sql1, use_container_width=True)
 
     with col2:
-        st.markdown("#### Failure Rate by Type (%)")
+        st.markdown("#### Failure Rate by Machine Type (%)")
+        st.caption("High-risk machines only · Target=1 means confirmed failure")
         hr2 = df[df['high_risk_rpm']==1].groupby('Type')['Target'].mean()*100
         fig_sql2 = go.Figure()
-        fig_sql2.add_trace(go.Bar(x=['L-Type','M-Type','H-Type'],y=[hr2.get('L',0),hr2.get('M',0),hr2.get('H',0)],marker=dict(color=['rgba(251,146,60,0.3)','rgba(248,113,113,0.3)','rgba(74,222,128,0.3)'],line=dict(color=['#fb923c','#f87171','#4ade80'],width=2)),text=[f"{hr2.get('L',0):.1f}%",f"{hr2.get('M',0):.1f}%",f"{hr2.get('H',0):.1f}%"],textposition='outside',textfont=dict(color='#cdd9e5')))
+        fig_sql2.add_trace(go.Bar(
+            x=['L-Type','M-Type','H-Type'],
+            y=[hr2.get('L',0),hr2.get('M',0),hr2.get('H',0)],
+            marker=dict(color=['rgba(251,146,60,0.3)','rgba(248,113,113,0.3)','rgba(74,222,128,0.3)'],line=dict(color=['#fb923c','#f87171','#4ade80'],width=2)),
+            text=[f"{hr2.get('L',0):.1f}%",f"{hr2.get('M',0):.1f}%",f"{hr2.get('H',0):.1f}%"],
+            textposition='outside',
+            textfont=dict(color='#cdd9e5',size=14,weight='bold')
+        ))
         fig_sql2.add_hline(y=hr2.mean(),line_dash="dash",line_color="rgba(251,191,36,0.6)",annotation_text="Fleet avg",annotation_font_color="#fbbf24")
-        fig_sql2.update_layout(height=280,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Failure %',color='#cdd9e5'),showlegend=False,margin=dict(l=50,r=20,t=20,b=40))
+        fig_sql2.update_layout(height=300,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Failure Rate (%)',color='#cdd9e5',range=[0,13]),showlegend=False,margin=dict(l=50,r=20,t=40,b=40))
         st.plotly_chart(fig_sql2, use_container_width=True)
 
     st.markdown("#### 📌 Key Business Conclusions")
