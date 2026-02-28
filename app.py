@@ -705,7 +705,7 @@ with col1:
          legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
          margin=dict(l=40, r=20, t=20, b=80)
     )
-     st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, use_container_width=True)
     
  with col2:
       st.markdown("#### Failure Type Distribution")
@@ -719,7 +719,7 @@ with col1:
               colors=['rgba(74,222,128,0.8)', 'rgba(251,146,60,0.8)', 
                     'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)', 
                     'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'],
-            line=dict(color='#07090f', width=2)
+              line=dict(color='#07090f', width=2)
         ),
           textposition='auto', textinfo='label+percent',
           textfont=dict(size=9, color='#cdd9e5'),
