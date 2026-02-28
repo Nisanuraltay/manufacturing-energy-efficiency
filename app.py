@@ -770,6 +770,7 @@ st.markdown("<br>", unsafe_allow_html=True)
          margin=dict(l=40, r=20, t=20, b=60)
     )
     st.plotly_chart(fig3, use_container_width=True)
+
 with col2:
     st.markdown("#### Failure Type Distribution")
     st.caption("348 total failure records")
