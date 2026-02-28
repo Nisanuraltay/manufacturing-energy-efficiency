@@ -839,8 +839,7 @@ with col1:
         margin=dict(l=40, r=20, t=20, b=60)
     )
     st.plotly_chart(fig3, use_container_width=True)
-    
-with col2:
+    with col2:
     st.markdown("#### Normal vs High-Risk Efficiency")
     st.caption("Efficiency Score comparison")
         
@@ -891,6 +890,9 @@ with col3:
     )
     st.plotly_chart(fig5, use_container_width=True)
     st.caption("🟢 0-1: Normal | 🟡 2-3: Monitor | 🔴 4-5: URGENT")
+
+    
+
     
 
 
