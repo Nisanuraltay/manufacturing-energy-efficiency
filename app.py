@@ -707,9 +707,9 @@ with col1:
     )
     st.plotly_chart(fig1, use_container_width=True)
     
-  with col2:
-      st.markdown("#### Failure Type Distribution")
-      st.caption("348 total failure records")
+with col2:
+    st.markdown("#### Failure Type Distribution")
+    st.caption("348 total failure records")
         
     failure_counts = df['Failure Type'].value_counts()
         
