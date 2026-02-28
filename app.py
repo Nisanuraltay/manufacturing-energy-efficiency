@@ -1091,9 +1091,9 @@ with tab4:
     st.dataframe(rec_data, hide_index=True, use_container_width=True, height=200)
     st.success("✅ **Model is production-ready** — automatic priority scoring enables proactive, data-driven maintenance.")
     # ═══════════════════════════════════════════
-    # TAB 5: STRATEGIC ACTION PLAN
-    # ═══════════════════════════════════════════
-    with tab5:
+# TAB 5: STRATEGIC ACTION PLAN
+# ═══════════════════════════════════════════
+with tab5:
     st.markdown("## 💼 Strategic Action Plan — Data-Driven Roadmap")
     
     st.markdown("""
