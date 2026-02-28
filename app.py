@@ -770,56 +770,129 @@ st.markdown("<br>", unsafe_allow_html=True)
          margin=dict(l=40, r=20, t=20, b=60)
     )
     st.plotly_chart(fig3, use_container_width=True)
+with col2:
+    st.markdown("#### Failure Type Distribution")
+    st.caption("348 total failure records")
+        
+    failure_counts = df['Failure Type'].value_counts()
+        
+    fig2 = go.Figure(data=[go.Pie(
+        labels=failure_counts.index, 
+        values=failure_counts.values, 
+        hole=0.65,
+        marker=dict(
+            colors=['rgba(74,222,128,0.8)', 'rgba(251,146,60,0.8)', 
+                    'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)', 
+                    'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'],
+            line=dict(color='#07090f', width=2)
+        ),
+        textposition='auto', 
+        textinfo='label+percent',
+        textfont=dict(size=9, color='#cdd9e5'),
+        hoverinfo='label+value+percent'
+    )])
     
-    with col2:
-        st.markdown("#### Normal vs High-Risk Efficiency")
-        st.caption("Efficiency Score comparison")
-        
-        normal_eff = df[df['high_risk_rpm']==0]['efficiency_score'].mean()
-        highrisk_eff = df[df['high_risk_rpm']==1]['efficiency_score'].mean()
-        
-        fig4 = go.Figure()
-        fig4.add_trace(go.Bar(
-            x=['Normal', 'High-Risk'], y=[normal_eff, highrisk_eff],
-            marker=dict(
-                color=['rgba(74,222,128,0.3)', 'rgba(248,113,113,0.3)'],
-                line=dict(color=['rgba(74,222,128,1)', 'rgba(248,113,113,1)'], width=2)
-            ),
-            text=[f'{normal_eff:.2f}', f'{highrisk_eff:.2f}'],
-            textposition='outside', textfont=dict(color='#cdd9e5', size=12)
-        ))
-        fig4.update_layout(
-            height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-            font=dict(color='#cdd9e5', size=10),
-            xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', range=[0, 45], color='#cdd9e5', title='Efficiency Score'),
-            showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
-        )
-        st.plotly_chart(fig4, use_container_width=True)
+    fig2.update_layout(
+        height=350, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+        font=dict(color='#cdd9e5', size=9), showlegend=True,
+        legend=dict(orientation='v', x=1.05, y=0.5, font=dict(size=8, color='#cdd9e5')),
+        margin=dict(l=20, r=120, t=20, b=20)
+    )
+    st.plotly_chart(fig2, use_container_width=True)
     
-    with col3:
-        st.markdown("#### Optimization Priority Distribution")
-        st.caption("Score 0–5 · 418 critical (4-5)")
+st.markdown("<br>", unsafe_allow_html=True)
+    
+# ROW 2: Type + Efficiency + Priority
+col1, col2, col3 = st.columns(3)
+    
+with col1:
+    st.markdown("#### Machine Type Distribution")
+    st.caption("L / M / H type fleet")
         
-        priority_counts = df['optimization_priority'].value_counts().reindex(range(6), fill_value=0).sort_index()
-        colors = ['rgba(74,222,128,0.3)'] * 2 + ['rgba(251,191,36,0.3)'] * 2 + ['rgba(248,113,113,0.3)'] * 2
-        borders = ['rgba(74,222,128,1)'] * 2 + ['rgba(251,191,36,1)'] * 2 + ['rgba(248,113,113,1)'] * 2
+    type_normal = df[df['high_risk_rpm']==0]['Type'].value_counts()
+    type_highrisk = df[df['high_risk_rpm']==1]['Type'].value_counts()
         
-        fig5 = go.Figure()
-        fig5.add_trace(go.Bar(
-            x=priority_counts.index.astype(str), y=priority_counts.values,
-            marker=dict(color=colors, line=dict(color=borders, width=1.5)),
-            text=priority_counts.values, textposition='outside', textfont=dict(color='#cdd9e5')
-        ))
-        fig5.update_layout(
-            height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-            font=dict(color='#cdd9e5', size=10),
-            xaxis=dict(gridcolor='#1e2738', title='Priority', color='#cdd9e5'),
-            yaxis=dict(gridcolor='#1e2738', title='Count', color='#cdd9e5'),
-            showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
-        )
-        st.plotly_chart(fig5, use_container_width=True)
-        st.caption("🟢 0-1: Normal | 🟡 2-3: Monitor | 🔴 4-5: URGENT")
+    fig3 = go.Figure()
+    fig3.add_trace(go.Bar(
+        name='Normal', x=['L', 'M', 'H'],
+        y=[type_normal.get('L', 0), type_normal.get('M', 0), type_normal.get('H', 0)],
+        marker_color='rgba(56,189,248,0.3)', marker_line_color='rgba(56,189,248,1)', marker_line_width=1.5,
+        text=[type_normal.get('L', 0), type_normal.get('M', 0), type_normal.get('H', 0)],
+        textposition='inside', textfont=dict(color='#cdd9e5')
+    ))
+    
+    fig3.add_trace(go.Bar(
+        name='High-Risk', x=['L', 'M', 'H'],
+        y=[type_highrisk.get('L', 0), type_highrisk.get('M', 0), type_highrisk.get('H', 0)],
+        marker_color='rgba(248,113,113,0.3)', marker_line_color='rgba(248,113,113,1)', marker_line_width=1.5,
+        text=[type_highrisk.get('L', 0), type_highrisk.get('M', 0), type_highrisk.get('H', 0)],
+        textposition='inside', textfont=dict(color='#cdd9e5')
+    ))
+    
+    fig3.update_layout(
+        barmode='stack', height=280,
+        plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+        font=dict(color='#cdd9e5', size=10),
+        xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+        yaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+        legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
+        margin=dict(l=40, r=20, t=20, b=60)
+    )
+    st.plotly_chart(fig3, use_container_width=True)
+    
+with col2:
+    st.markdown("#### Normal vs High-Risk Efficiency")
+    st.caption("Efficiency Score comparison")
+        
+    normal_eff = df[df['high_risk_rpm']==0]['efficiency_score'].mean()
+    highrisk_eff = df[df['high_risk_rpm']==1]['efficiency_score'].mean()
+        
+    fig4 = go.Figure()
+    fig4.add_trace(go.Bar(
+        x=['Normal', 'High-Risk'], y=[normal_eff, highrisk_eff],
+        marker=dict(
+            color=['rgba(74,222,128,0.3)', 'rgba(248,113,113,0.3)'],
+            line=dict(color=['rgba(74,222,128,1)', 'rgba(248,113,113,1)'], width=2)
+        ),
+        text=[f'{normal_eff:.2f}', f'{highrisk_eff:.2f}'],
+        textposition='outside', textfont=dict(color='#cdd9e5', size=12)
+    ))
+    
+    fig4.update_layout(
+        height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+        font=dict(color='#cdd9e5', size=10),
+        xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+        yaxis=dict(gridcolor='#1e2738', range=[0, 45], color='#cdd9e5', title='Efficiency Score'),
+        showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
+    )
+    st.plotly_chart(fig4, use_container_width=True)
+    
+with col3:
+    st.markdown("#### Optimization Priority Distribution")
+    st.caption("Score 0–5 · 418 critical (4-5)")
+        
+    priority_counts = df['optimization_priority'].value_counts().reindex(range(6), fill_value=0).sort_index()
+    colors = ['rgba(74,222,128,0.3)'] * 2 + ['rgba(251,191,36,0.3)'] * 2 + ['rgba(248,113,113,0.3)'] * 2
+    borders = ['rgba(74,222,128,1)'] * 2 + ['rgba(251,191,36,1)'] * 2 + ['rgba(248,113,113,1)'] * 2
+        
+    fig5 = go.Figure()
+    fig5.add_trace(go.Bar(
+        x=priority_counts.index.astype(str), y=priority_counts.values,
+        marker=dict(color=colors, line=dict(color=borders, width=1.5)),
+        text=priority_counts.values, textposition='outside', textfont=dict(color='#cdd9e5')
+    ))
+    
+    fig5.update_layout(
+        height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+        font=dict(color='#cdd9e5', size=10),
+        xaxis=dict(gridcolor='#1e2738', title='Priority', color='#cdd9e5'),
+        yaxis=dict(gridcolor='#1e2738', title='Count', color='#cdd9e5'),
+        showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
+    )
+    st.plotly_chart(fig5, use_container_width=True)
+    st.caption("🟢 0-1: Normal | 🟡 2-3: Monitor | 🔴 4-5: URGENT")
+    
+
 
 # ═══════════════════════════════════════════════════
 # TAB 2: MACHINE ANALYSIS
