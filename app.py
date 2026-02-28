@@ -809,9 +809,9 @@ with tab2:
             low_pct = (highrisk_energy.get('Low', 0) / df['high_risk_rpm'].sum() * 100)
             st.caption(f"⚠️ **High-Risk:** {low_pct:.1f}% in 'Low' category (misleading formula - low torque)")
     
-  with col2:
-        st.markdown("#### Tool Wear Distribution")
-        st.caption(f"Average: {df['Tool wear [min]'].mean():.1f} minutes")
+        with col2:
+          st.markdown("#### Tool Wear Distribution")
+          st.caption(f"Average: {df['Tool wear [min]'].mean():.1f} minutes")
         
         # Summary stats ÖNCE (ÜST)
         col_x, col_y, col_z = st.columns(3)
