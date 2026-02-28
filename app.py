@@ -4,7 +4,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
-import streamlit.components.v1 as components
 
 # Page config
 st.set_page_config(
@@ -17,33 +16,6 @@ st.set_page_config(
 # Session state for navigation
 if 'page' not in st.session_state:
     st.session_state.page = 'cover'
-
-# Custom CSS
-components.html("""
-<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:60px 40px;background:#07090f;text-align:center;font-family:sans-serif;min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-    <div style="font-size:80px;margin-bottom:20px;filter:drop-shadow(0 0 40px rgba(255,165,0,0.6))">⚡</div>
-    <div style="font-size:12px;letter-spacing:8px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:24px">
-        INDUSTRIAL DATA SCIENCE PORTFOLIO
-    </div>
-    <div style="font-size:48px;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:#fff;line-height:1.2;margin-bottom:16px">
-        MANUFACTURING ENERGY<br>
-        <span style="color:#ffaa00">EFFICIENCY ANALYSIS</span>
-    </div>
-    <div style="font-size:16px;color:rgba(255,255,255,0.5);font-style:italic;margin-bottom:40px">
-        Predictive Maintenance · Machine Learning · SQL Analytics<br>
-        <span style="color:rgba(255,165,0,0.8);font-weight:600">"10,000 Machines · 418 High-Risk · 227K TL Savings"</span>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
-        <span style="padding:6px 16px;border:1px solid rgba(255,140,0,0.4);color:rgba(255,140,0,0.8);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px">PYTHON</span>
-        <span style="padding:6px 16px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px">SQL</span>
-        <span style="padding:6px 16px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px">RANDOM FOREST</span>
-        <span style="padding:6px 16px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px">STREAMLIT</span>
-    </div>
-</body>
-</html>
-""", height=600)
 
 # Load data
 @st.cache_data
