@@ -192,7 +192,478 @@ tab1, tab2, tab3, tab4 = st.tabs(["📊 Overview", "🔧 Machine Analysis", "�
 # ═══════════════════════════════════════════════════
 with tab1:
     col1, col2 = st.columns([3, 2])
-    
+
+
+slider_code = '''
+# ═══════════════════════════════════════════════════
+# EXECUTIVE PRESENTATION SLIDER
+# ═══════════════════════════════════════════════════
+
+import streamlit.components.v1 as components
+
+components.html("""
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: #07090f; font-family: 'Segoe UI', sans-serif; }
+
+.slider-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #07090f;
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+}
+
+.slide {
+    min-width: 100%;
+    padding: 40px 48px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Slide backgrounds */
+.slide-1 { background: linear-gradient(135deg, #0a0e1a 0%, #0d1525 100%); }
+.slide-2 { background: linear-gradient(135deg, #100a08 0%, #1a0e0a 100%); }
+.slide-3 { background: linear-gradient(135deg, #080d10 0%, #0a1218 100%); }
+.slide-4 { background: linear-gradient(135deg, #08100a 0%, #0a1410 100%); }
+.slide-5 { background: linear-gradient(135deg, #0d0a14 0%, #120d1c 100%); }
+
+/* Slide number */
+.slide-num {
+    position: absolute;
+    top: 24px; right: 36px;
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -4px;
+    line-height: 1;
+    user-select: none;
+}
+
+/* Label */
+.slide-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+.label-blue { color: #38bdf8; }
+.label-red { color: #f87171; }
+.label-cyan { color: #00e5d4; }
+.label-green { color: #4ade80; }
+.label-purple { color: #a78bfa; }
+
+/* Title */
+.slide-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+.slide-title span { color: #ffaa00; }
+
+/* Divider */
+.divider {
+    width: 48px; height: 3px;
+    border-radius: 2px;
+    margin: 16px 0;
+}
+.div-blue { background: #38bdf8; }
+.div-red { background: #f87171; }
+.div-cyan { background: #00e5d4; }
+.div-green { background: #4ade80; }
+.div-purple { background: #a78bfa; }
+
+/* KPI grid */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+.kpi-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+.kpi-val {
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.kpi-lbl {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+}
+
+/* Insight rows */
+.insight-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 10px;
+}
+.insight-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.insight-text { flex: 1; }
+.insight-title { font-size: 13px; font-weight: 700; color: #ffffff; margin-bottom: 3px; }
+.insight-desc { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* Two column layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+
+/* Action items */
+.action-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+.action-badge {
+    font-size: 9px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
+    flex-shrink: 0; min-width: 70px; text-align: center;
+}
+.badge-red { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+.badge-orange { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+.badge-yellow { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+.badge-green { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+.action-text { font-size: 12px; color: rgba(255,255,255,0.7); }
+.action-impact { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+
+/* Bottom desc */
+.slide-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.7;
+    margin-top: 12px;
+    max-width: 600px;
+}
+
+/* NAVIGATION */
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 48px 20px;
+    background: #07090f;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-dots {
+    display: flex; gap: 8px; align-items: center;
+}
+.dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.dot.active {
+    background: #ffaa00;
+    width: 24px;
+    border-radius: 4px;
+}
+
+.nav-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.nav-btn:disabled { opacity: 0.2; cursor: default; }
+
+.nav-counter {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="slider-wrap">
+  <div class="slides" id="slides">
+
+    <!-- ══ SLIDE 1: EXECUTIVE SUMMARY ══ -->
+    <div class="slide slide-1">
+      <div class="slide-num">01</div>
+      <div class="slide-label label-blue">EXECUTIVE SUMMARY</div>
+      <div class="slide-title">Manufacturing Energy Efficiency<br><span>Analysis Overview</span></div>
+      <div class="divider div-blue"></div>
+      <div class="slide-desc">
+        End-to-end data analysis of 10,000 production machines to identify energy inefficiencies,
+        quantify financial risk, and build a predictive model for proactive maintenance prioritization.
+      </div>
+
+      <div class="kpi-grid" style="margin-top:24px">
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#38bdf8">10,000</div>
+          <div class="kpi-lbl">Machines Analyzed</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#f87171">418</div>
+          <div class="kpi-lbl">High-Risk Units</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#4ade80">100%</div>
+          <div class="kpi-lbl">ML Accuracy</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#ffaa00">₺2.96M</div>
+          <div class="kpi-lbl">Annual Cost Risk</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#a78bfa">227K TL</div>
+          <div class="kpi-lbl">Savings Potential</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#fb923c">3</div>
+          <div class="kpi-lbl">Analysis Phases</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 2: PROBLEM & COST ══ -->
+    <div class="slide slide-2">
+      <div class="slide-num">02</div>
+      <div class="slide-label label-red">BUSINESS PROBLEM</div>
+      <div class="slide-title">The Cost of <span>Undetected Inefficiency</span></div>
+      <div class="divider div-red"></div>
+
+      <div style="margin-top:20px">
+        <div class="insight-row" style="border-color:#f87171">
+          <div class="insight-icon">⚠️</div>
+          <div class="insight-text">
+            <div class="insight-title">Hidden High-Risk Machines</div>
+            <div class="insight-desc">418 machines (4.18% of fleet) operate at abnormal RPM — undetected without data analysis. These machines have a 2.6× higher failure rate than normal units.</div>
+          </div>
+        </div>
+        <div class="insight-row" style="border-color:#fb923c">
+          <div class="insight-icon">💸</div>
+          <div class="insight-text">
+            <div class="insight-title">₺2.96M Annual Cost Impact</div>
+            <div class="insight-desc">High-risk machines generate ₺454,826/year in failure costs alone. L-type machines drive 60% of total fleet energy cost (₺65.5M/year).</div>
+          </div>
+        </div>
+        <div class="insight-row" style="border-color:#fbbf24">
+          <div class="insight-icon">📉</div>
+          <div class="insight-text">
+            <div class="insight-title">27.8% Efficiency Gap</div>
+            <div class="insight-desc">High-risk machines score 27.76 vs 38.45 efficiency average — a 27.8% gap that directly translates to wasted energy and increased operational cost.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 3: KEY FINDINGS ══ -->
+    <div class="slide slide-3">
+      <div class="slide-num">03</div>
+      <div class="slide-label label-cyan">KEY FINDINGS</div>
+      <div class="slide-title">What the Data <span>Revealed</span></div>
+      <div class="divider div-cyan"></div>
+
+      <div class="two-col">
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:12px">Machine Risk Profile</div>
+          <div class="insight-row" style="border-color:#00e5d4;margin-bottom:8px">
+            <div class="insight-text">
+              <div class="insight-title" style="font-size:12px">High RPM + Low Torque</div>
+              <div class="insight-desc">Avg RPM: 2,102 vs 1,514 (normal) → 39% faster. Avg Torque: 18.9 Nm vs 40.9 Nm → 54% lower. Classic inefficiency pattern.</div>
+            </div>
+          </div>
+          <div class="insight-row" style="border-color:#f87171;margin-bottom:8px">
+            <div class="insight-text">
+              <div class="insight-title" style="font-size:12px">Failure Rate: 8.37% vs 3.17%</div>
+              <div class="insight-desc">High-risk machines fail 2.6× more often. M-type machines carry the highest individual risk at 9.6%.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:12px">Fleet Breakdown</div>
+          <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:16px">
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <span style="font-size:12px;color:rgba(255,255,255,0.6)">L-Type</span>
+              <span style="font-size:12px;font-weight:700;color:#f87171">256 units · 8.6% fail</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <span style="font-size:12px;color:rgba(255,255,255,0.6)">M-Type</span>
+              <span style="font-size:12px;font-weight:700;color:#fb923c">125 units · 9.6% fail</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0">
+              <span style="font-size:12px;color:rgba(255,255,255,0.6)">H-Type</span>
+              <span style="font-size:12px;font-weight:700;color:#4ade80">37 units · 2.7% fail</span>
+            </div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)">
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:6px">NIGHT SHIFT RISK</div>
+              <div style="font-size:13px;font-weight:700;color:#fbbf24">100% of high-risk → Night Shift</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 4: SQL INSIGHTS ══ -->
+    <div class="slide slide-4">
+      <div class="slide-num">04</div>
+      <div class="slide-label label-green">SQL BUSINESS INSIGHTS</div>
+      <div class="slide-title">3 Queries That <span>Changed the Strategy</span></div>
+      <div class="divider div-green"></div>
+
+      <div style="margin-top:20px">
+        <div class="insight-row" style="border-color:#4ade80">
+          <div class="insight-icon">🔵</div>
+          <div class="insight-text">
+            <div class="insight-title">Query 1 — Cost by Machine Type</div>
+            <div class="insight-desc">L-type: ₺65.5M/yr (60% of total) · M-type: ₺32.7M/yr · H-type: ₺10.9M/yr<br>→ <strong style="color:#4ade80">L-type optimization = highest ROI target</strong></div>
+          </div>
+        </div>
+        <div class="insight-row" style="border-color:#fbbf24">
+          <div class="insight-icon">🔴</div>
+          <div class="insight-text">
+            <div class="insight-title">Query 2 — Bottom 10% Efficiency</div>
+            <div class="insight-desc">1,000 machines identified as critically inefficient — 47% below fleet average.<br>→ <strong style="color:#fbbf24">Immediate maintenance = ₺454K/yr recovery</strong></div>
+          </div>
+        </div>
+        <div class="insight-row" style="border-color:#fb923c">
+          <div class="insight-icon">🟠</div>
+          <div class="insight-text">
+            <div class="insight-title">Query 3 — High-Risk Segmentation</div>
+            <div class="insight-desc">M-type carries 9.6% failure rate despite being mid-size fleet — highest per-unit risk.<br>→ <strong style="color:#fb923c">Risk mitigation program required for M-type</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 5: ACTION PLAN ══ -->
+    <div class="slide slide-5">
+      <div class="slide-num">05</div>
+      <div class="slide-label label-purple">STRATEGIC ACTION PLAN</div>
+      <div class="slide-title">4-Step <span>Optimization Roadmap</span></div>
+      <div class="divider div-purple"></div>
+
+      <div style="margin-top:20px">
+        <div class="action-item">
+          <div class="action-badge badge-red">URGENT</div>
+          <div>
+            <div class="action-text">Bottom 10% Immediate Maintenance — 1,000 machines</div>
+            <div class="action-impact">Timeline: Immediately · Impact: ₺454K/yr savings</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-badge badge-orange">30 DAYS</div>
+          <div>
+            <div class="action-text">L-Type RPM Optimization Program — 256 high-risk units</div>
+            <div class="action-impact">Timeline: 30 days · Impact: Highest ROI (60% of cost base)</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-badge badge-yellow">60 DAYS</div>
+          <div>
+            <div class="action-text">M-Type Failure Prevention Program — 9.6% failure rate</div>
+            <div class="action-impact">Timeline: 60 days · Impact: Risk mitigation, prevent cascading failures</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-badge badge-green">90 DAYS</div>
+          <div>
+            <div class="action-text">Deploy ML Scoring Model — All new machines auto-prioritized</div>
+            <div class="action-impact">Timeline: 90 days · Impact: Proactive maintenance, scalable system</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 16px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.5)">
+        ✅ Full implementation potential: <strong style="color:#a78bfa">227,000 TL/year savings</strong> with 50% failure reduction target
+      </div>
+    </div>
+
+  </div><!-- /slides -->
+</div><!-- /slider-wrap -->
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div class="nav-dots" id="dots"></div>
+    <div class="nav-counter" id="counter">1 / 5</div>
+  </div>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+let current = 0;
+const total = 5;
+const slidesEl = document.getElementById('slides');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
+
+// Create dots
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  current = n;
+  slidesEl.style.transform = `translateX(-${current * 100}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i === current ? ' active' : '');
+  });
+  counter.textContent = `${current + 1} / ${total}`;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+}
+
+function changeSlide(dir) {
+  if (current + dir >= 0 && current + dir < total) goTo(current + dir);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') changeSlide(1);
+  if (e.key === 'ArrowLeft') changeSlide(-1);
+});
+</script>
+</body>
+</html>
+""", height=520, scrolling=False)
+
+st.markdown("<br>", unsafe_allow_html=True)
+'''
+
     with col1:
         st.markdown("#### RPM Distribution — Normal vs High-Risk")
         st.caption("IQR method · Threshold: 1139–1895 RPM")
