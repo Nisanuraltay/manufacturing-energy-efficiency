@@ -85,70 +85,51 @@ def load_data():
 # COVER PAGE
 # ═══════════════════════════════════════════════════
 if st.session_state.page == 'cover':
+    
+    # Sayfayı tamamen siyah yap
     st.markdown("""
-    <div style="
-        min-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        background: linear-gradient(180deg, #07090f 0%, #0d1117 100%);
-        padding: 60px 40px;
-    ">
-        <div style="font-size: 80px; margin-bottom: 20px; 
-                    filter: drop-shadow(0 0 40px rgba(255,165,0,0.6));">
-            ⚡
-        </div>
-        
-        <div style="font-size: 12px; letter-spacing: 8px; text-transform: uppercase; 
-                    color: rgba(255,255,255,0.3); margin-bottom: 24px;">
-            INDUSTRIAL DATA SCIENCE PORTFOLIO
-        </div>
-        
-        <div style="font-size: 48px; font-weight: 900; letter-spacing: 4px; 
-                    text-transform: uppercase; color: #fff; line-height: 1.2; margin-bottom: 16px;">
-            MANUFACTURING ENERGY<br>
-            <span style="color: #ffaa00;">EFFICIENCY ANALYSIS</span>
-        </div>
-        
-        <div style="font-size: 16px; color: rgba(255,255,255,0.5); 
-                    font-style: italic; margin-bottom: 40px; max-width: 600px;">
-            Predictive Maintenance · Machine Learning · SQL Analytics<br>
-            <span style="color: rgba(255,165,0,0.8); font-weight: 600;">
-                "10,000 Machines · 418 High-Risk · 227K TL Savings"
-            </span>
-        </div>
-        
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px;">
-            <span style="padding: 6px 16px; border: 1px solid rgba(255,140,0,0.4); 
-                        color: rgba(255,140,0,0.8); font-size: 10px; letter-spacing: 2px; 
-                        text-transform: uppercase; border-radius: 20px;">PYTHON</span>
-            <span style="padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); 
-                        color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; 
-                        text-transform: uppercase; border-radius: 20px;">SQL</span>
-            <span style="padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); 
-                        color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; 
-                        text-transform: uppercase; border-radius: 20px;">RANDOM FOREST</span>
-            <span style="padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); 
-                        color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; 
-                        text-transform: uppercase; border-radius: 20px;">STREAMLIT</span>
-        </div>
-    </div>
+    <style>
+    .stApp { background: #000 !important; }
+    .block-container { padding: 0 !important; max-width: 100% !important; }
+    header { display: none !important; }
+    </style>
     """, unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 1, 1])
+    st.markdown("<div style='height: 60px'></div>", unsafe_allow_html=True)
+    
+    # Icon
+    st.markdown("<div style='text-align:center;font-size:80px;filter:drop-shadow(0 0 40px rgba(255,165,0,0.6))'>⚡</div>", unsafe_allow_html=True)
+    
+    st.markdown("<div style='text-align:center;font-size:12px;letter-spacing:8px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:16px 0'>INDUSTRIAL DATA SCIENCE PORTFOLIO</div>", unsafe_allow_html=True)
+    
+    # Orange line
+    st.markdown("<div style='height:4px;background:linear-gradient(90deg,transparent,#ff8c00,#ffaa00,#ff8c00,transparent);box-shadow:0 0 20px rgba(255,140,0,0.4);margin:0 auto;max-width:700px'></div>", unsafe_allow_html=True)
+    
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
+    
+    # Title
+    st.markdown("<div style='text-align:center;font-size:48px;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:#fff;line-height:1.2'>MANUFACTURING ENERGY<br><span style=\"color:#ffaa00\">EFFICIENCY ANALYSIS</span></div>", unsafe_allow_html=True)
+    
+    st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+    
+    # Subtitle
+    st.markdown("<div style='text-align:center;font-size:16px;color:rgba(255,255,255,0.5);font-style:italic'>Predictive Maintenance · Machine Learning · SQL Analytics<br><span style=\"color:rgba(255,165,0,0.8);font-weight:600\">\"10,000 Machines · 418 High-Risk · 227K TL Savings\"</span></div>", unsafe_allow_html=True)
+    
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
+    
+    # Tags
+    st.markdown("<div style='text-align:center;display:flex;gap:12px;flex-wrap:wrap;justify-content:center'><span style='display:inline-block;padding:6px 16px;border:1px solid rgba(255,140,0,0.4);color:rgba(255,140,0,0.8);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px;margin:4px'>PYTHON</span><span style='display:inline-block;padding:6px 16px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px;margin:4px'>SQL</span><span style='display:inline-block;padding:6px 16px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px;margin:4px'>RANDOM FOREST</span><span style='display:inline-block;padding:6px 16px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:20px;margin:4px'>STREAMLIT</span></div>", unsafe_allow_html=True)
+    
+    st.markdown("<div style='height:48px'></div>", unsafe_allow_html=True)
+    
+    # Button
+    col1, col2, col3 = st.columns([1,1,1])
     with col2:
         if st.button("🚀 ENTER DASHBOARD", use_container_width=True):
             st.session_state.page = 'dashboard'
             st.rerun()
     
-    st.markdown("""
-    <div style="text-align: center; margin-top: 60px; font-size: 11px; 
-                color: rgba(255,255,255,0.2); letter-spacing: 3px; text-transform: uppercase;">
-        N. Nur Altay · Data Analyst · February 2026
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center;margin-top:40px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:3px;text-transform:uppercase'>N. Nur Altay · Data Analyst · February 2026</div>", unsafe_allow_html=True)
     
     st.stop()
 
