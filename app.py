@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+import streamlit.components.v1 as components
 
 # Page config
 st.set_page_config(
@@ -191,223 +192,57 @@ tab1, tab2, tab3, tab4 = st.tabs(["📊 Overview", "🔧 Machine Analysis", "�
 # TAB 1: OVERVIEW
 # ═══════════════════════════════════════════════════
 with tab1:
-    col1, col2 = st.columns([3, 2])
 
-
-slider_code = '''
-# ═══════════════════════════════════════════════════
-# EXECUTIVE PRESENTATION SLIDER
-# ═══════════════════════════════════════════════════
-
-import streamlit.components.v1 as components
-
-components.html("""
+    # ── EXECUTIVE PRESENTATION SLIDER ──
+    components.html("""
 <!DOCTYPE html>
 <html>
 <head>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background: #07090f; font-family: 'Segoe UI', sans-serif; }
-
-.slider-wrap {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    background: #07090f;
-}
-
-.slides {
-    display: flex;
-    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
-    will-change: transform;
-}
-
-.slide {
-    min-width: 100%;
-    padding: 40px 48px;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Slide backgrounds */
-.slide-1 { background: linear-gradient(135deg, #0a0e1a 0%, #0d1525 100%); }
-.slide-2 { background: linear-gradient(135deg, #100a08 0%, #1a0e0a 100%); }
-.slide-3 { background: linear-gradient(135deg, #080d10 0%, #0a1218 100%); }
-.slide-4 { background: linear-gradient(135deg, #08100a 0%, #0a1410 100%); }
-.slide-5 { background: linear-gradient(135deg, #0d0a14 0%, #120d1c 100%); }
-
-/* Slide number */
-.slide-num {
-    position: absolute;
-    top: 24px; right: 36px;
-    font-size: 72px;
-    font-weight: 900;
-    color: rgba(255,255,255,0.04);
-    letter-spacing: -4px;
-    line-height: 1;
-    user-select: none;
-}
-
-/* Label */
-.slide-label {
-    font-size: 9px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    font-weight: 700;
-}
-.label-blue { color: #38bdf8; }
-.label-red { color: #f87171; }
-.label-cyan { color: #00e5d4; }
-.label-green { color: #4ade80; }
-.label-purple { color: #a78bfa; }
-
-/* Title */
-.slide-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1.2;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-}
-.slide-title span { color: #ffaa00; }
-
-/* Divider */
-.divider {
-    width: 48px; height: 3px;
-    border-radius: 2px;
-    margin: 16px 0;
-}
-.div-blue { background: #38bdf8; }
-.div-red { background: #f87171; }
-.div-cyan { background: #00e5d4; }
-.div-green { background: #4ade80; }
-.div-purple { background: #a78bfa; }
-
-/* KPI grid */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 20px;
-}
-.kpi-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-}
-.kpi-val {
-    font-size: 26px;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 4px;
-}
-.kpi-lbl {
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-}
-
-/* Insight rows */
-.insight-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-    background: rgba(255,255,255,0.03);
-    border-left: 3px solid;
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 10px;
-}
-.insight-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-.insight-text { flex: 1; }
-.insight-title { font-size: 13px; font-weight: 700; color: #ffffff; margin-bottom: 3px; }
-.insight-desc { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; }
-
-/* Two column layout */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-
-/* Action items */
-.action-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
-    margin-bottom: 8px;
-}
-.action-badge {
-    font-size: 9px; font-weight: 800;
-    letter-spacing: 1px; text-transform: uppercase;
-    padding: 4px 10px; border-radius: 4px;
-    flex-shrink: 0; min-width: 70px; text-align: center;
-}
-.badge-red { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
-.badge-orange { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
-.badge-yellow { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
-.badge-green { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-.action-text { font-size: 12px; color: rgba(255,255,255,0.7); }
-.action-impact { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
-
-/* Bottom desc */
-.slide-desc {
-    font-size: 13px;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.7;
-    margin-top: 12px;
-    max-width: 600px;
-}
-
-/* NAVIGATION */
-.nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 48px 20px;
-    background: #07090f;
-    border-top: 1px solid rgba(255,255,255,0.06);
-}
-
-.nav-dots {
-    display: flex; gap: 8px; align-items: center;
-}
-.dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.dot.active {
-    background: #ffaa00;
-    width: 24px;
-    border-radius: 4px;
-}
-
-.nav-btn {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.6);
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-}
-.nav-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.nav-btn:disabled { opacity: 0.2; cursor: default; }
-
-.nav-counter {
-    font-size: 11px;
-    color: rgba(255,255,255,0.25);
-    letter-spacing: 2px;
-    font-weight: 600;
-}
+.slider-wrap { position:relative; width:100%; overflow:hidden; background:#07090f; }
+.slides { display:flex; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+.slide { min-width:100%; padding:40px 48px; position:relative; overflow:hidden; }
+.slide-1 { background:linear-gradient(135deg,#0a0e1a 0%,#0d1525 100%); }
+.slide-2 { background:linear-gradient(135deg,#100a08 0%,#1a0e0a 100%); }
+.slide-3 { background:linear-gradient(135deg,#080d10 0%,#0a1218 100%); }
+.slide-4 { background:linear-gradient(135deg,#08100a 0%,#0a1410 100%); }
+.slide-5 { background:linear-gradient(135deg,#0d0a14 0%,#120d1c 100%); }
+.slide-num { position:absolute; top:24px; right:36px; font-size:72px; font-weight:900; color:rgba(255,255,255,0.04); letter-spacing:-4px; line-height:1; user-select:none; }
+.slide-label { font-size:9px; letter-spacing:4px; text-transform:uppercase; margin-bottom:12px; font-weight:700; }
+.label-blue{color:#38bdf8;} .label-red{color:#f87171;} .label-cyan{color:#00e5d4;} .label-green{color:#4ade80;} .label-purple{color:#a78bfa;}
+.slide-title { font-size:28px; font-weight:800; color:#fff; line-height:1.2; margin-bottom:8px; letter-spacing:-0.5px; }
+.slide-title span { color:#ffaa00; }
+.divider { width:48px; height:3px; border-radius:2px; margin:16px 0; }
+.div-blue{background:#38bdf8;} .div-red{background:#f87171;} .div-cyan{background:#00e5d4;} .div-green{background:#4ade80;} .div-purple{background:#a78bfa;}
+.kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px; }
+.kpi-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center; }
+.kpi-val { font-size:26px; font-weight:900; line-height:1; margin-bottom:4px; }
+.kpi-lbl { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+.insight-row { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; background:rgba(255,255,255,0.03); border-left:3px solid; border-radius:0 8px 8px 0; margin-bottom:10px; }
+.insight-icon { font-size:20px; flex-shrink:0; margin-top:2px; }
+.insight-text { flex:1; }
+.insight-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:3px; }
+.insight-desc { font-size:11px; color:rgba(255,255,255,0.45); line-height:1.5; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+.action-item { display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:8px; }
+.action-badge { font-size:9px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:4px 10px; border-radius:4px; flex-shrink:0; min-width:70px; text-align:center; }
+.badge-red{background:rgba(248,113,113,0.15);color:#f87171;border:1px solid rgba(248,113,113,0.3);}
+.badge-orange{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3);}
+.badge-yellow{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);}
+.badge-green{background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);}
+.action-text { font-size:12px; color:rgba(255,255,255,0.7); }
+.action-impact { font-size:10px; color:rgba(255,255,255,0.3); margin-top:2px; }
+.slide-desc { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.7; margin-top:12px; max-width:600px; }
+.nav { display:flex; align-items:center; justify-content:space-between; padding:16px 48px 20px; background:#07090f; border-top:1px solid rgba(255,255,255,0.06); }
+.nav-dots { display:flex; gap:8px; align-items:center; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.15); cursor:pointer; transition:all 0.3s; }
+.dot.active { background:#ffaa00; width:24px; border-radius:4px; }
+.nav-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.6); padding:8px 20px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.nav-btn:hover { background:rgba(255,255,255,0.1); color:#fff; }
+.nav-btn:disabled { opacity:0.2; cursor:default; }
+.nav-counter { font-size:11px; color:rgba(255,255,255,0.25); letter-spacing:2px; font-weight:600; }
 </style>
 </head>
 <body>
@@ -415,52 +250,29 @@ body { background: #07090f; font-family: 'Segoe UI', sans-serif; }
 <div class="slider-wrap">
   <div class="slides" id="slides">
 
-    <!-- ══ SLIDE 1: EXECUTIVE SUMMARY ══ -->
+    <!-- SLIDE 1: EXECUTIVE SUMMARY -->
     <div class="slide slide-1">
       <div class="slide-num">01</div>
       <div class="slide-label label-blue">EXECUTIVE SUMMARY</div>
       <div class="slide-title">Manufacturing Energy Efficiency<br><span>Analysis Overview</span></div>
       <div class="divider div-blue"></div>
-      <div class="slide-desc">
-        End-to-end data analysis of 10,000 production machines to identify energy inefficiencies,
-        quantify financial risk, and build a predictive model for proactive maintenance prioritization.
-      </div>
-
+      <div class="slide-desc">End-to-end data analysis of 10,000 production machines to identify energy inefficiencies, quantify financial risk, and build a predictive model for proactive maintenance prioritization.</div>
       <div class="kpi-grid" style="margin-top:24px">
-        <div class="kpi-card">
-          <div class="kpi-val" style="color:#38bdf8">10,000</div>
-          <div class="kpi-lbl">Machines Analyzed</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val" style="color:#f87171">418</div>
-          <div class="kpi-lbl">High-Risk Units</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val" style="color:#4ade80">100%</div>
-          <div class="kpi-lbl">ML Accuracy</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val" style="color:#ffaa00">₺2.96M</div>
-          <div class="kpi-lbl">Annual Cost Risk</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val" style="color:#a78bfa">227K TL</div>
-          <div class="kpi-lbl">Savings Potential</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val" style="color:#fb923c">3</div>
-          <div class="kpi-lbl">Analysis Phases</div>
-        </div>
+        <div class="kpi-card"><div class="kpi-val" style="color:#38bdf8">10,000</div><div class="kpi-lbl">Machines Analyzed</div></div>
+        <div class="kpi-card"><div class="kpi-val" style="color:#f87171">418</div><div class="kpi-lbl">High-Risk Units</div></div>
+        <div class="kpi-card"><div class="kpi-val" style="color:#4ade80">100%</div><div class="kpi-lbl">ML Accuracy</div></div>
+        <div class="kpi-card"><div class="kpi-val" style="color:#ffaa00">₺2.96M</div><div class="kpi-lbl">Annual Cost Risk</div></div>
+        <div class="kpi-card"><div class="kpi-val" style="color:#a78bfa">227K TL</div><div class="kpi-lbl">Savings Potential</div></div>
+        <div class="kpi-card"><div class="kpi-val" style="color:#fb923c">3</div><div class="kpi-lbl">Analysis Phases</div></div>
       </div>
     </div>
 
-    <!-- ══ SLIDE 2: PROBLEM & COST ══ -->
+    <!-- SLIDE 2: BUSINESS PROBLEM -->
     <div class="slide slide-2">
       <div class="slide-num">02</div>
       <div class="slide-label label-red">BUSINESS PROBLEM</div>
       <div class="slide-title">The Cost of <span>Undetected Inefficiency</span></div>
       <div class="divider div-red"></div>
-
       <div style="margin-top:20px">
         <div class="insight-row" style="border-color:#f87171">
           <div class="insight-icon">⚠️</div>
@@ -486,20 +298,19 @@ body { background: #07090f; font-family: 'Segoe UI', sans-serif; }
       </div>
     </div>
 
-    <!-- ══ SLIDE 3: KEY FINDINGS ══ -->
+    <!-- SLIDE 3: KEY FINDINGS -->
     <div class="slide slide-3">
       <div class="slide-num">03</div>
       <div class="slide-label label-cyan">KEY FINDINGS</div>
       <div class="slide-title">What the Data <span>Revealed</span></div>
       <div class="divider div-cyan"></div>
-
       <div class="two-col">
         <div>
           <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:12px">Machine Risk Profile</div>
           <div class="insight-row" style="border-color:#00e5d4;margin-bottom:8px">
             <div class="insight-text">
               <div class="insight-title" style="font-size:12px">High RPM + Low Torque</div>
-              <div class="insight-desc">Avg RPM: 2,102 vs 1,514 (normal) → 39% faster. Avg Torque: 18.9 Nm vs 40.9 Nm → 54% lower. Classic inefficiency pattern.</div>
+              <div class="insight-desc">Avg RPM: 2,102 vs 1,514 (normal) → 39% faster. Avg Torque: 18.9 Nm vs 40.9 Nm → 54% lower.</div>
             </div>
           </div>
           <div class="insight-row" style="border-color:#f87171;margin-bottom:8px">
@@ -533,13 +344,12 @@ body { background: #07090f; font-family: 'Segoe UI', sans-serif; }
       </div>
     </div>
 
-    <!-- ══ SLIDE 4: SQL INSIGHTS ══ -->
+    <!-- SLIDE 4: SQL INSIGHTS -->
     <div class="slide slide-4">
       <div class="slide-num">04</div>
       <div class="slide-label label-green">SQL BUSINESS INSIGHTS</div>
       <div class="slide-title">3 Queries That <span>Changed the Strategy</span></div>
       <div class="divider div-green"></div>
-
       <div style="margin-top:20px">
         <div class="insight-row" style="border-color:#4ade80">
           <div class="insight-icon">🔵</div>
@@ -565,53 +375,38 @@ body { background: #07090f; font-family: 'Segoe UI', sans-serif; }
       </div>
     </div>
 
-    <!-- ══ SLIDE 5: ACTION PLAN ══ -->
+    <!-- SLIDE 5: ACTION PLAN -->
     <div class="slide slide-5">
       <div class="slide-num">05</div>
       <div class="slide-label label-purple">STRATEGIC ACTION PLAN</div>
       <div class="slide-title">4-Step <span>Optimization Roadmap</span></div>
       <div class="divider div-purple"></div>
-
       <div style="margin-top:20px">
         <div class="action-item">
           <div class="action-badge badge-red">URGENT</div>
-          <div>
-            <div class="action-text">Bottom 10% Immediate Maintenance — 1,000 machines</div>
-            <div class="action-impact">Timeline: Immediately · Impact: ₺454K/yr savings</div>
-          </div>
+          <div><div class="action-text">Bottom 10% Immediate Maintenance — 1,000 machines</div><div class="action-impact">Timeline: Immediately · Impact: ₺454K/yr savings</div></div>
         </div>
         <div class="action-item">
           <div class="action-badge badge-orange">30 DAYS</div>
-          <div>
-            <div class="action-text">L-Type RPM Optimization Program — 256 high-risk units</div>
-            <div class="action-impact">Timeline: 30 days · Impact: Highest ROI (60% of cost base)</div>
-          </div>
+          <div><div class="action-text">L-Type RPM Optimization Program — 256 high-risk units</div><div class="action-impact">Timeline: 30 days · Impact: Highest ROI (60% of cost base)</div></div>
         </div>
         <div class="action-item">
           <div class="action-badge badge-yellow">60 DAYS</div>
-          <div>
-            <div class="action-text">M-Type Failure Prevention Program — 9.6% failure rate</div>
-            <div class="action-impact">Timeline: 60 days · Impact: Risk mitigation, prevent cascading failures</div>
-          </div>
+          <div><div class="action-text">M-Type Failure Prevention Program — 9.6% failure rate</div><div class="action-impact">Timeline: 60 days · Impact: Risk mitigation, prevent cascading failures</div></div>
         </div>
         <div class="action-item">
           <div class="action-badge badge-green">90 DAYS</div>
-          <div>
-            <div class="action-text">Deploy ML Scoring Model — All new machines auto-prioritized</div>
-            <div class="action-impact">Timeline: 90 days · Impact: Proactive maintenance, scalable system</div>
-          </div>
+          <div><div class="action-text">Deploy ML Scoring Model — All new machines auto-prioritized</div><div class="action-impact">Timeline: 90 days · Impact: Proactive maintenance, scalable system</div></div>
         </div>
       </div>
-
       <div style="margin-top:16px;padding:12px 16px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.5)">
         ✅ Full implementation potential: <strong style="color:#a78bfa">227,000 TL/year savings</strong> with 50% failure reduction target
       </div>
     </div>
 
-  </div><!-- /slides -->
-</div><!-- /slider-wrap -->
+  </div>
+</div>
 
-<!-- NAVIGATION -->
 <div class="nav">
   <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
@@ -627,207 +422,192 @@ const total = 5;
 const slidesEl = document.getElementById('slides');
 const dotsEl = document.getElementById('dots');
 const counter = document.getElementById('counter');
-
-// Create dots
 for (let i = 0; i < total; i++) {
   const d = document.createElement('div');
   d.className = 'dot' + (i === 0 ? ' active' : '');
   d.onclick = () => goTo(i);
   dotsEl.appendChild(d);
 }
-
 function goTo(n) {
   current = n;
   slidesEl.style.transform = `translateX(-${current * 100}%)`;
-  document.querySelectorAll('.dot').forEach((d, i) => {
-    d.className = 'dot' + (i === current ? ' active' : '');
-  });
+  document.querySelectorAll('.dot').forEach((d, i) => { d.className = 'dot' + (i === current ? ' active' : ''); });
   counter.textContent = `${current + 1} / ${total}`;
   document.getElementById('prevBtn').disabled = current === 0;
   document.getElementById('nextBtn').disabled = current === total - 1;
 }
-
-function changeSlide(dir) {
-  if (current + dir >= 0 && current + dir < total) goTo(current + dir);
-}
-
-// Keyboard navigation
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight') changeSlide(1);
-  if (e.key === 'ArrowLeft') changeSlide(-1);
-});
+function changeSlide(dir) { if (current + dir >= 0 && current + dir < total) goTo(current + dir); }
+document.addEventListener('keydown', e => { if (e.key === 'ArrowRight') changeSlide(1); if (e.key === 'ArrowLeft') changeSlide(-1); });
 </script>
 </body>
 </html>
 """, height=520, scrolling=False)
 
-st.markdown("<br>", unsafe_allow_html=True)'''
+    st.markdown("<br>", unsafe_allow_html=True)
 
-with col1:
-    st.markdown("#### RPM Distribution — Normal vs High-Risk")
-    st.caption("IQR method · Threshold: 1139–1895 RPM")
-        
-    bins = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000]
-    bin_labels = ['1000-1200', '1200-1400', '1400-1600', '1600-1800', 
-                  '1800-2000', '2000-2200', '2200-2400', '2400-2600', 
-                  '2600-2800', '2800-3000']
-        
-    normal_counts = []
-    highrisk_counts = []
-    normal_rpm = df[df['high_risk_rpm'] == 0]['Rotational speed [rpm]']
-    highrisk_rpm = df[df['high_risk_rpm'] == 1]['Rotational speed [rpm]']
-        
-    for i in range(len(bins)-1):
-        normal_counts.append(((normal_rpm >= bins[i]) & (normal_rpm < bins[i+1])).sum())
-        highrisk_counts.append(((highrisk_rpm >= bins[i]) & (highrisk_rpm < bins[i+1])).sum())
-        
-    fig1 = go.Figure()
-    fig1.add_trace(go.Bar(
-        name=f'Normal ({len(normal_rpm):,})',
-        x=bin_labels, y=normal_counts,
-        marker_color='rgba(56,189,248,0.3)',
-        marker_line_color='rgba(56,189,248,1)',
-        marker_line_width=1.5
-    ))
-    fig1.add_trace(go.Bar(
-        name=f'High-Risk ({len(highrisk_rpm):,})',
-        x=bin_labels, y=highrisk_counts,
-        marker_color='rgba(248,113,113,0.3)',
-        marker_line_color='rgba(248,113,113,1)',
-        marker_line_width=1.5
-    ))
-    fig1.update_layout(
-        barmode='group', height=350,
-        plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-        font=dict(color='#cdd9e5', size=10),
-        xaxis=dict(gridcolor='#1e2738', title='RPM Range', color='#cdd9e5', tickangle=-45),
-        yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
-        legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
-        margin=dict(l=40, r=20, t=20, b=80)
-    )
-    st.plotly_chart(fig1, use_container_width=True)
+    # ── ROW 1: RPM Distribution + Failure Pie ──
+    col1, col2 = st.columns([3, 2])
 
-with col2:
-    st.markdown("#### Failure Type Distribution")
-    st.caption("348 total failure records")
-        
-    failure_counts = df['Failure Type'].value_counts()
-        
-    fig2 = go.Figure(data=[go.Pie(
-        labels=failure_counts.index, 
-        values=failure_counts.values, 
-        hole=0.65,
-        marker=dict(
-            colors=['rgba(74,222,128,0.8)', 'rgba(251,146,60,0.8)', 
-                    'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)', 
-                    'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'],
-            line=dict(color='#07090f', width=2)
-        ),
-        textposition='auto', 
-        textinfo='label+percent',
-        textfont=dict(size=9, color='#cdd9e5'),
-        hoverinfo='label+value+percent'
-    )])
-    
-    fig2.update_layout(
-        height=350, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-        font=dict(color='#cdd9e5', size=9), showlegend=True,
-        legend=dict(orientation='v', x=1.05, y=0.5, font=dict(size=8, color='#cdd9e5')),
-        margin=dict(l=20, r=120, t=20, b=20)
-    )
-    st.plotly_chart(fig2, use_container_width=True)
+    with col1:
+        st.markdown("#### RPM Distribution — Normal vs High-Risk")
+        st.caption("IQR method · Threshold: 1139–1895 RPM")
 
-st.markdown("<br>", unsafe_allow_html=True)
-    
-# --- ROW 2: Type + Efficiency + Priority ---
-col1_r2, col2_r2, col3_r2 = st.columns(3)
-    
-with col1_r2:
-    st.markdown("#### Machine Type Distribution")
-    st.caption("L / M / H type fleet")
-        
-    type_normal = df[df['high_risk_rpm'] == 0]['Type'].value_counts()
-    type_highrisk = df[df['high_risk_rpm'] == 1]['Type'].value_counts()
-        
-    fig3 = go.Figure()
-    fig3.add_trace(go.Bar(
-        name='Normal', x=['L', 'M', 'H'],
-        y=[type_normal.get('L', 0), type_normal.get('M', 0), type_normal.get('H', 0)],
-        marker_color='rgba(56,189,248,0.3)', marker_line_color='rgba(56,189,248,1)', marker_line_width=1.5,
-        text=[type_normal.get('L', 0), type_normal.get('M', 0), type_normal.get('H', 0)],
-        textposition='inside', textfont=dict(color='#cdd9e5')
-    ))
-    
-    fig3.add_trace(go.Bar(
-        name='High-Risk', x=['L', 'M', 'H'],
-        y=[type_highrisk.get('L', 0), type_highrisk.get('M', 0), type_highrisk.get('H', 0)],
-        marker_color='rgba(248,113,113,0.3)', marker_line_color='rgba(248,113,113,1)', marker_line_width=1.5,
-        text=[type_highrisk.get('L', 0), type_highrisk.get('M', 0), type_highrisk.get('H', 0)],
-        textposition='inside', textfont=dict(color='#cdd9e5')
-    ))
-    
-    fig3.update_layout(
-        barmode='stack', height=280,
-        plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-        font=dict(color='#cdd9e5', size=10),
-        xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-        yaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-        legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
-        margin=dict(l=40, r=20, t=20, b=60)
-    )
-    st.plotly_chart(fig3, use_container_width=True)
+        bins = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000]
+        bin_labels = ['1000-1200', '1200-1400', '1400-1600', '1600-1800',
+                      '1800-2000', '2000-2200', '2200-2400', '2400-2600',
+                      '2600-2800', '2800-3000']
 
-with col2_r2:
-    st.markdown("#### Normal vs High-Risk Efficiency")
-    st.caption("Efficiency Score comparison")
-        
-    normal_eff = df[df['high_risk_rpm'] == 0]['efficiency_score'].mean()
-    highrisk_eff = df[df['high_risk_rpm'] == 1]['efficiency_score'].mean()
-        
-    fig4 = go.Figure()
-    fig4.add_trace(go.Bar(
-        x=['Normal', 'High-Risk'], y=[normal_eff, highrisk_eff],
-        marker=dict(
-            color=['rgba(74,222,128,0.3)', 'rgba(248,113,113,0.3)'],
-            line=dict(color=['rgba(74,222,128,1)', 'rgba(248,113,113,1)'], width=2)
-        ),
-        text=[f'{normal_eff:.2f}', f'{highrisk_eff:.2f}'],
-        textposition='outside', textfont=dict(color='#cdd9e5', size=12)
-    ))
-    
-    fig4.update_layout(
-        height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-        font=dict(color='#cdd9e5', size=10),
-        xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-        yaxis=dict(gridcolor='#1e2738', range=[0, 45], color='#cdd9e5', title='Efficiency Score'),
-        showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
-    )
-    st.plotly_chart(fig4, use_container_width=True)
-    
-with col3_r2:
-    st.markdown("#### Optimization Priority Distribution")
-    st.caption("Score 0–5 · 418 critical (4-5)")
-        
-    priority_counts = df['optimization_priority'].value_counts().reindex(range(6), fill_value=0).sort_index()
-    colors = ['rgba(74,222,128,0.3)'] * 2 + ['rgba(251,191,36,0.3)'] * 2 + ['rgba(248,113,113,0.3)'] * 2
-    borders = ['rgba(74,222,128,1)'] * 2 + ['rgba(251,191,36,1)'] * 2 + ['rgba(248,113,113,1)'] * 2
-        
-    fig5 = go.Figure()
-    fig5.add_trace(go.Bar(
-        x=priority_counts.index.astype(str), y=priority_counts.values,
-        marker=dict(color=colors, line=dict(color=borders, width=1.5)),
-        text=priority_counts.values, textposition='outside', textfont=dict(color='#cdd9e5')
-    ))
-    
-    fig5.update_layout(
-        height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-        font=dict(color='#cdd9e5', size=10),
-        xaxis=dict(gridcolor='#1e2738', title='Priority', color='#cdd9e5'),
-        yaxis=dict(gridcolor='#1e2738', title='Count', color='#cdd9e5'),
-        showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
-    )
-    st.plotly_chart(fig5, use_container_width=True)
-    st.caption("🟢 0-1: Normal | 🟡 2-3: Monitor | 🔴 4-5: URGENT")
+        normal_counts = []
+        highrisk_counts = []
+        normal_rpm = df[df['high_risk_rpm'] == 0]['Rotational speed [rpm]']
+        highrisk_rpm = df[df['high_risk_rpm'] == 1]['Rotational speed [rpm]']
+
+        for i in range(len(bins) - 1):
+            normal_counts.append(((normal_rpm >= bins[i]) & (normal_rpm < bins[i+1])).sum())
+            highrisk_counts.append(((highrisk_rpm >= bins[i]) & (highrisk_rpm < bins[i+1])).sum())
+
+        fig1 = go.Figure()
+        fig1.add_trace(go.Bar(
+            name=f'Normal ({len(normal_rpm):,})',
+            x=bin_labels, y=normal_counts,
+            marker_color='rgba(56,189,248,0.3)',
+            marker_line_color='rgba(56,189,248,1)',
+            marker_line_width=1.5
+        ))
+        fig1.add_trace(go.Bar(
+            name=f'High-Risk ({len(highrisk_rpm):,})',
+            x=bin_labels, y=highrisk_counts,
+            marker_color='rgba(248,113,113,0.3)',
+            marker_line_color='rgba(248,113,113,1)',
+            marker_line_width=1.5
+        ))
+        fig1.update_layout(
+            barmode='group', height=350,
+            plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            xaxis=dict(gridcolor='#1e2738', title='RPM Range', color='#cdd9e5', tickangle=-45),
+            yaxis=dict(gridcolor='#1e2738', title='Machine Count', color='#cdd9e5'),
+            legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
+            margin=dict(l=40, r=20, t=20, b=80)
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+
+    with col2:
+        st.markdown("#### Failure Type Distribution")
+        st.caption("348 total failure records")
+
+        failure_counts = df['Failure Type'].value_counts()
+
+        fig2 = go.Figure(data=[go.Pie(
+            labels=failure_counts.index,
+            values=failure_counts.values,
+            hole=0.65,
+            marker=dict(
+                colors=['rgba(74,222,128,0.8)', 'rgba(251,146,60,0.8)',
+                        'rgba(248,113,113,0.8)', 'rgba(251,191,36,0.8)',
+                        'rgba(167,139,250,0.8)', 'rgba(56,189,248,0.8)'],
+                line=dict(color='#07090f', width=2)
+            ),
+            textposition='auto',
+            textinfo='label+percent',
+            textfont=dict(size=9, color='#cdd9e5'),
+            hoverinfo='label+value+percent'
+        )])
+        fig2.update_layout(
+            height=350, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=9), showlegend=True,
+            legend=dict(orientation='v', x=1.05, y=0.5, font=dict(size=8, color='#cdd9e5')),
+            margin=dict(l=20, r=120, t=20, b=20)
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── ROW 2: Machine Type + Efficiency + Priority ──
+    col1_r2, col2_r2, col3_r2 = st.columns(3)
+
+    with col1_r2:
+        st.markdown("#### Machine Type Distribution")
+        st.caption("L / M / H type fleet")
+
+        type_normal = df[df['high_risk_rpm'] == 0]['Type'].value_counts()
+        type_highrisk = df[df['high_risk_rpm'] == 1]['Type'].value_counts()
+
+        fig3 = go.Figure()
+        fig3.add_trace(go.Bar(
+            name='Normal', x=['L', 'M', 'H'],
+            y=[type_normal.get('L', 0), type_normal.get('M', 0), type_normal.get('H', 0)],
+            marker_color='rgba(56,189,248,0.3)', marker_line_color='rgba(56,189,248,1)', marker_line_width=1.5,
+            text=[type_normal.get('L', 0), type_normal.get('M', 0), type_normal.get('H', 0)],
+            textposition='inside', textfont=dict(color='#cdd9e5')
+        ))
+        fig3.add_trace(go.Bar(
+            name='High-Risk', x=['L', 'M', 'H'],
+            y=[type_highrisk.get('L', 0), type_highrisk.get('M', 0), type_highrisk.get('H', 0)],
+            marker_color='rgba(248,113,113,0.3)', marker_line_color='rgba(248,113,113,1)', marker_line_width=1.5,
+            text=[type_highrisk.get('L', 0), type_highrisk.get('M', 0), type_highrisk.get('H', 0)],
+            textposition='inside', textfont=dict(color='#cdd9e5')
+        ))
+        fig3.update_layout(
+            barmode='stack', height=280,
+            plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+            yaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+            legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
+            margin=dict(l=40, r=20, t=20, b=60)
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+
+    with col2_r2:
+        st.markdown("#### Normal vs High-Risk Efficiency")
+        st.caption("Efficiency Score comparison")
+
+        normal_eff = df[df['high_risk_rpm'] == 0]['efficiency_score'].mean()
+        highrisk_eff = df[df['high_risk_rpm'] == 1]['efficiency_score'].mean()
+
+        fig4 = go.Figure()
+        fig4.add_trace(go.Bar(
+            x=['Normal', 'High-Risk'], y=[normal_eff, highrisk_eff],
+            marker=dict(
+                color=['rgba(74,222,128,0.3)', 'rgba(248,113,113,0.3)'],
+                line=dict(color=['rgba(74,222,128,1)', 'rgba(248,113,113,1)'], width=2)
+            ),
+            text=[f'{normal_eff:.2f}', f'{highrisk_eff:.2f}'],
+            textposition='outside', textfont=dict(color='#cdd9e5', size=12)
+        ))
+        fig4.update_layout(
+            height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+            yaxis=dict(gridcolor='#1e2738', range=[0, 45], color='#cdd9e5', title='Efficiency Score'),
+            showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
+        )
+        st.plotly_chart(fig4, use_container_width=True)
+
+    with col3_r2:
+        st.markdown("#### Optimization Priority Distribution")
+        st.caption("Score 0–5 · 418 critical (4-5)")
+
+        priority_counts = df['optimization_priority'].value_counts().reindex(range(6), fill_value=0).sort_index()
+        colors = ['rgba(74,222,128,0.3)'] * 2 + ['rgba(251,191,36,0.3)'] * 2 + ['rgba(248,113,113,0.3)'] * 2
+        borders = ['rgba(74,222,128,1)'] * 2 + ['rgba(251,191,36,1)'] * 2 + ['rgba(248,113,113,1)'] * 2
+
+        fig5 = go.Figure()
+        fig5.add_trace(go.Bar(
+            x=priority_counts.index.astype(str), y=priority_counts.values,
+            marker=dict(color=colors, line=dict(color=borders, width=1.5)),
+            text=priority_counts.values, textposition='outside', textfont=dict(color='#cdd9e5')
+        ))
+        fig5.update_layout(
+            height=280, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+            font=dict(color='#cdd9e5', size=10),
+            xaxis=dict(gridcolor='#1e2738', title='Priority', color='#cdd9e5'),
+            yaxis=dict(gridcolor='#1e2738', title='Count', color='#cdd9e5'),
+            showlegend=False, margin=dict(l=40, r=20, t=20, b=40)
+        )
+        st.plotly_chart(fig5, use_container_width=True)
+        st.caption("🟢 0-1: Normal | 🟡 2-3: Monitor | 🔴 4-5: URGENT")
     
 # ═══════════════════════════════════════════════════
 # TAB 2: MACHINE ANALYSIS
