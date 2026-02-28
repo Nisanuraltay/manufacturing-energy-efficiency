@@ -673,9 +673,9 @@ with col1:
                  '2600-2800', '2800-3000']
         
     normal_counts = []
-     highrisk_counts = []
-     normal_rpm = df[df['high_risk_rpm']==0]['Rotational speed [rpm]']
-     highrisk_rpm = df[df['high_risk_rpm']==1]['Rotational speed [rpm]']
+    highrisk_counts = []
+    normal_rpm = df[df['high_risk_rpm']==0]['Rotational speed [rpm]']
+    highrisk_rpm = df[df['high_risk_rpm']==1]['Rotational speed [rpm]']
         
     for i in range(len(bins)-1):
         normal_counts.append(((normal_rpm >= bins[i]) & (normal_rpm < bins[i+1])).sum())
