@@ -661,8 +661,7 @@ document.addEventListener('keydown', e => {
 </html>
 """, height=520, scrolling=False)
 
-st.markdown("<br>", unsafe_allow_html=True)
-'''
+st.markdown("<br>", unsafe_allow_html=True)'''
 
     with col1:
         st.markdown("#### RPM Distribution — Normal vs High-Risk")
