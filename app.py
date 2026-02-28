@@ -253,35 +253,39 @@ if st.session_state.page == 'executive':
     col_left, col_right = st.columns(2)
 
     with col_left:
-        st.markdown("""
-        <div style="background:linear-gradient(135deg,#100a08,#1a0e0a);border:1px solid rgba(248,113,113,0.15);border-radius:14px;padding:24px">
-            <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#f87171;margin-bottom:10px;font-weight:700">BUSINESS PROBLEM</div>
-            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:16px;line-height:1.3">The Cost of<br><span style="color:#ffaa00">Undetected Inefficiency</span></div>
-            <div style="display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #f87171;border-radius:0 8px 8px 0">
-                    <div style="font-size:18px">⚠️</div>
-                    <div>
-                        <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">418 Hidden High-Risk Machines</div>
-                        <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">4.18% of fleet operating at abnormal RPM — invisible without data analysis. 2.6× higher failure rate.</div>
-                    </div>
-                </div>
-                <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #fb923c;border-radius:0 8px 8px 0">
-                    <div style="font-size:18px">💸</div>
-                    <div>
-                        <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">₺2.96M Annual Financial Exposure</div>
-                        <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">L-type machines alone drive 60% of total fleet energy cost (₺65.5M/year). Risk is concentrated.</div>
-                    </div>
-                </div>
-                <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0">
-                    <div style="font-size:18px">📉</div>
-                    <div>
-                        <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">27.8% Efficiency Gap</div>
-                        <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">High-risk machines score 27.76 vs 38.45 fleet average. Every point of efficiency = direct cost saving.</div>
-                    </div>
-                </div>
+        components.html("""
+<!DOCTYPE html><html><head>
+<style>* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; } body { background:transparent; }</style>
+</head><body>
+<div style="background:linear-gradient(135deg,#100a08,#1a0e0a);border:1px solid rgba(248,113,113,0.15);border-radius:14px;padding:24px;height:100%">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#f87171;margin-bottom:10px;font-weight:700">BUSINESS PROBLEM</div>
+    <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:16px;line-height:1.3">The Cost of<br><span style="color:#ffaa00">Undetected Inefficiency</span></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #f87171;border-radius:0 8px 8px 0">
+            <div style="font-size:18px;flex-shrink:0">&#9888;&#65039;</div>
+            <div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">418 Hidden High-Risk Machines</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">4.18% of fleet operating at abnormal RPM &mdash; invisible without data analysis. 2.6&times; higher failure rate.</div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #fb923c;border-radius:0 8px 8px 0">
+            <div style="font-size:18px;flex-shrink:0">&#128184;</div>
+            <div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">&#8378;2.96M Annual Financial Exposure</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">L-type machines alone drive 60% of total fleet energy cost (&#8378;65.5M/year). Risk is concentrated.</div>
+            </div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0">
+            <div style="font-size:18px;flex-shrink:0">&#128201;</div>
+            <div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">27.8% Efficiency Gap</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">High-risk machines score 27.76 vs 38.45 fleet average. Every point of efficiency = direct cost saving.</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>
+        """, height=520, scrolling=False)
 
     with col_right:
         components.html("""
@@ -387,9 +391,9 @@ df = load_data()
 # ── Sidebar ──
 with st.sidebar:
     st.markdown("""
-    <div style="padding:20px 16px 16px;border-bottom:1px solid rgba(0,206,209,0.12);background:linear-gradient(135deg,#0a0e1a,#0d1525)">
-        <div style="font-size:26px;margin-bottom:6px">⚡</div>
-        <div style="font-size:16px;font-weight:800;color:#00ced1;letter-spacing:0.5px;line-height:1.2">Energy<br>Dashboard</div>
+    <div style="padding:24px 16px 18px;border-bottom:1px solid rgba(0,206,209,0.12);text-align:center;background:#0a0e1a">
+        <div style="font-size:36px;margin-bottom:8px;filter:drop-shadow(0 0 10px rgba(255,165,0,0.5))">⚡</div>
+        <div style="font-size:18px;font-weight:800;color:#00ced1;letter-spacing:0.5px;line-height:1.3">Energy<br>Dashboard</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -578,10 +582,21 @@ with tab2:
         energy_counts = dff['energy_category'].value_counts()
         ca,cb,cc = st.columns(3)
         with ca: st.metric("Low <0.8kW", f"{energy_counts.get('Low',0):,}")
-        with cb: st.metric("Medium", f"{energy_counts.get('Medium',0):,}")
+        with cb: st.metric("Medium 0.8-1.2kW", f"{energy_counts.get('Medium',0):,}")
         with cc: st.metric("High >1.2kW", f"{energy_counts.get('High',0):,}")
-        fig_energy = go.Figure(data=[go.Pie(labels=energy_counts.index,values=energy_counts.values,hole=0.6,marker=dict(colors=['rgba(248,113,113,0.7)','rgba(56,189,248,0.7)','rgba(74,222,128,0.7)'],line=dict(color='#07090f',width=2)),textposition='inside',textinfo='label+percent',textfont=dict(size=11,color='#cdd9e5'))])
-        fig_energy.update_layout(height=230,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),showlegend=True,legend=dict(orientation='h',y=-0.15,x=0.5,xanchor='center',font=dict(size=9,color='#cdd9e5')),margin=dict(l=20,r=20,t=10,b=50))
+        # Renkleri kategoriye göre manuel eşleştir
+        color_map = {'Low': 'rgba(74,222,128,0.8)', 'Medium': 'rgba(251,191,36,0.8)', 'High': 'rgba(248,113,113,0.8)'}
+        pie_colors = [color_map.get(lbl, 'rgba(100,100,100,0.8)') for lbl in energy_counts.index]
+        fig_energy = go.Figure(data=[go.Pie(
+            labels=energy_counts.index,
+            values=energy_counts.values,
+            hole=0.6,
+            marker=dict(colors=pie_colors, line=dict(color='#07090f', width=2)),
+            textposition='inside',
+            textinfo='label+percent',
+            textfont=dict(size=12, color='#fff')
+        )])
+        fig_energy.update_layout(height=250,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),showlegend=True,legend=dict(orientation='h',y=-0.12,x=0.5,xanchor='center',font=dict(size=10,color='#cdd9e5')),margin=dict(l=20,r=20,t=10,b=50))
         st.plotly_chart(fig_energy, use_container_width=True)
 
     with col2:
