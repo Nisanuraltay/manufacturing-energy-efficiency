@@ -69,8 +69,8 @@ footer { display: none !important; }
 [data-testid="collapsedControl"] { display: none !important; }
 button[kind="header"] { display: none !important; }
 section[data-testid="stSidebar"] {
-    background: #0a0e1a !important;
-    border-right: 1px solid rgba(0,206,209,0.12) !important;
+    background: #07090f !important;
+    border-right: 1px solid rgba(0,206,209,0.10) !important;
     min-width: 260px !important;
     max-width: 260px !important;
 }
@@ -182,18 +182,13 @@ if st.session_state.page == 'executive':
     </style>
     """, unsafe_allow_html=True)
 
-    # ✅ DEĞİŞİKLİK 2: 4 kolon — Skip butonu eklendi
-    col_back, col_title, col_skip, col_enter = st.columns([1, 3, 1, 1])
+    col_back, col_title, col_enter = st.columns([1, 4, 1])
     with col_back:
         if st.button("← Back"):
             st.session_state.page = 'cover'
             st.rerun()
     with col_title:
         st.markdown("<div style='text-align:center;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding-top:8px'>EXECUTIVE BRIEFING</div>", unsafe_allow_html=True)
-    with col_skip:
-        if st.button("Skip →"):
-            st.session_state.page = 'dashboard'
-            st.rerun()
     with col_enter:
         if st.button("Dashboard →"):
             st.session_state.page = 'dashboard'
@@ -442,29 +437,16 @@ if st.session_state.page == 'executive':
 df = load_data()
 
 with st.sidebar:
-    # ✅ DEĞİŞİKLİK 4: padding 24px → 32px (logo yukarı)
     st.markdown("""
-    <div style="padding:32px 16px 20px;border-bottom:1px solid rgba(0,206,209,0.12);text-align:center;background:#0a0e1a">
-        <div style="font-size:36px;margin-bottom:8px;filter:drop-shadow(0 0 10px rgba(255,165,0,0.5))">⚡</div>
-        <div style="font-size:18px;font-weight:800;color:#00ced1;letter-spacing:0.5px;line-height:1.3">Energy<br>Dashboard</div>
+    <div style="padding:40px 16px 24px;border-bottom:1px solid rgba(0,206,209,0.12);text-align:center;background:#07090f">
+        <div style="font-size:42px;margin-bottom:10px;filter:drop-shadow(0 0 14px rgba(255,165,0,0.6))">⚡</div>
+        <div style="font-size:22px;font-weight:900;color:#00ced1;letter-spacing:1px;line-height:1.25">Energy<br>Dashboard</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:2px;text-transform:uppercase;margin-top:6px">Manufacturing · 10K Machines</div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0 16px;margin-bottom:8px;font-weight:700'>FLEET SNAPSHOT</div>", unsafe_allow_html=True)
-
-    qs1, qs2 = st.columns(2)
-    with qs1:
-        st.metric(label="Total Fleet", value=f"{len(df):,}", delta="10K machines")
-    with qs2:
-        st.metric(label="High-Risk", value=f"{int(df['high_risk_rpm'].sum())}", delta=f"{df['high_risk_rpm'].sum()/len(df)*100:.1f}%", delta_color="inverse")
-    qs3, qs4 = st.columns(2)
-    with qs3:
-        st.metric(label="Avg Efficiency", value=f"{df['efficiency_score'].mean():.1f}", delta="Fleet avg")
-    with qs4:
-        st.metric(label="Total Failures", value=f"{int(df['Target'].sum())}", delta=f"{df['Target'].sum()/len(df)*100:.1f}%", delta_color="inverse")
-
-    st.markdown("<hr style='border-color:rgba(0,206,209,0.12);margin:16px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:rgba(0,206,209,0.10);margin:0 0 12px 0'>", unsafe_allow_html=True)
 
     st.markdown("<div style='font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0 16px;margin-bottom:8px;font-weight:700'>FILTERS</div>", unsafe_allow_html=True)
 
@@ -719,112 +701,6 @@ with tab2:
         fig_wear.update_layout(height=240,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',title='Tool Wear (min)',color='#cdd9e5',tickangle=-45),yaxis=dict(gridcolor='#1e2738',title='Count',color='#cdd9e5',range=[0,2800]),showlegend=False,margin=dict(l=50,r=20,t=40,b=80))
         st.plotly_chart(fig_wear, use_container_width=True)
 
-    st.markdown("### ⚡ Calculated Power Consumption Analysis")
-    st.caption("Mechanical power formula: P = (RPM × Torque × 2π) / 60000")
-
-    col1, col2 = st.columns(2)
-
-    # ✅ DEĞİŞİKLİK 6: Box plot — tam veri kontrolü, boş grafik sorunu çözüldü
-    with col1:
-        st.markdown("#### Power Distribution by Risk Status")
-        normal_pw = dff[dff['high_risk_rpm']==0]['calculated_power_kw']
-        highrisk_pw = dff[dff['high_risk_rpm']==1]['calculated_power_kw']
-
-        if len(normal_pw) == 0 and len(highrisk_pw) == 0:
-            st.warning("⚠️ No data available for current filter selection.")
-        else:
-            fig_power_box = go.Figure()
-            if len(normal_pw) > 0:
-                fig_power_box.add_trace(go.Box(
-                    y=normal_pw,
-                    name=f'Normal ({len(normal_pw):,})',
-                    marker_color='rgba(74,222,128,0.7)',
-                    line_color='rgba(74,222,128,1)',
-                    boxmean='sd',
-                    hovertemplate='<b>Normal</b><br>Power: %{y:.3f} kW<extra></extra>'
-                ))
-            if len(highrisk_pw) > 0:
-                fig_power_box.add_trace(go.Box(
-                    y=highrisk_pw,
-                    name=f'High-Risk ({len(highrisk_pw):,})',
-                    marker_color='rgba(248,113,113,0.7)',
-                    line_color='rgba(248,113,113,1)',
-                    boxmean='sd',
-                    hovertemplate='<b>High-Risk</b><br>Power: %{y:.3f} kW<extra></extra>'
-                ))
-            fig_power_box.update_layout(
-                height=300, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-                font=dict(color='#cdd9e5', size=10),
-                yaxis=dict(gridcolor='#1e2738', title='Calculated Power (kW)', color='#cdd9e5'),
-                xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
-                showlegend=True,
-                legend=dict(orientation='h', y=-0.2, font=dict(color='#cdd9e5')),
-                margin=dict(l=50, r=20, t=20, b=60)
-            )
-            st.plotly_chart(fig_power_box, use_container_width=True)
-
-            if len(normal_pw) > 0 and len(highrisk_pw) > 0:
-                normal_avg = normal_pw.mean()
-                highrisk_avg = highrisk_pw.mean()
-                diff_pct = (normal_avg - highrisk_avg) / normal_avg * 100
-                direction = 'less' if diff_pct > 0 else 'more'
-                st.info(f"💡 **Power Pattern:** High-risk machines consume **{abs(diff_pct):.1f}% {direction}** power ({highrisk_avg:.3f} kW vs {normal_avg:.3f} kW normal avg). Low torque at high RPM = poor work output per watt.")
-            elif len(normal_pw) > 0:
-                st.info(f"💡 Normal machines avg: **{normal_pw.mean():.3f} kW** · No high-risk machines in current filter.")
-            else:
-                st.info(f"💡 High-risk machines avg: **{highrisk_pw.mean():.3f} kW** · No normal machines in current filter.")
-
-    # ✅ DEĞİŞİKLİK 6: Scatter plot — tam sample ve veri kontrolü, dinamik y-axis
-    with col2:
-        st.markdown("#### Power vs Efficiency Correlation")
-        normal_df = dff[dff['high_risk_rpm']==0]
-        highrisk_df = dff[dff['high_risk_rpm']==1]
-
-        if len(normal_df) == 0 and len(highrisk_df) == 0:
-            st.warning("⚠️ No data available for current filter selection.")
-        else:
-            fig_power_eff = go.Figure()
-
-            if len(normal_df) > 0:
-                sample_n = min(800, len(normal_df))
-                normal_sample = normal_df.sample(sample_n, random_state=42)
-                fig_power_eff.add_trace(go.Scatter(
-                    x=normal_sample['calculated_power_kw'],
-                    y=normal_sample['efficiency_score'],
-                    mode='markers',
-                    name=f'Normal ({len(normal_df):,})',
-                    marker=dict(color='rgba(74,222,128,0.5)', size=4, line=dict(width=0)),
-                    hovertemplate='<b>Normal</b><br>Power: %{x:.3f} kW<br>Efficiency: %{y:.2f}<extra></extra>'
-                ))
-
-            if len(highrisk_df) > 0:
-                fig_power_eff.add_trace(go.Scatter(
-                    x=highrisk_df['calculated_power_kw'],
-                    y=highrisk_df['efficiency_score'],
-                    mode='markers',
-                    name=f'High-Risk ({len(highrisk_df):,})',
-                    marker=dict(color='rgba(248,113,113,0.8)', size=6, symbol='diamond', line=dict(width=0.5, color='white')),
-                    hovertemplate='<b>High-Risk</b><br>Power: %{x:.3f} kW<br>Efficiency: %{y:.2f}<extra></extra>'
-                ))
-
-            # Veriye göre dinamik y ekseni
-            all_eff_vals = []
-            if len(normal_df) > 0: all_eff_vals.extend(normal_df['efficiency_score'].tolist())
-            if len(highrisk_df) > 0: all_eff_vals.extend(highrisk_df['efficiency_score'].tolist())
-            y_min = max(0, min(all_eff_vals) - 2) if all_eff_vals else 15
-            y_max = max(all_eff_vals) + 2 if all_eff_vals else 50
-
-            fig_power_eff.update_layout(
-                height=300, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
-                font=dict(color='#cdd9e5', size=10),
-                xaxis=dict(gridcolor='#1e2738', title='Calculated Power (kW)', color='#cdd9e5'),
-                yaxis=dict(gridcolor='#1e2738', title='Efficiency Score', color='#cdd9e5', range=[y_min, y_max]),
-                legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
-                margin=dict(l=50, r=20, t=20, b=70),
-                hovermode='closest'
-            )
-            st.plotly_chart(fig_power_eff, use_container_width=True)
-            st.warning("⚠️ **Engineering Insight:** High-risk machines (diamonds) cluster at low-power + low-efficiency zone. High RPM with low torque = energy wasted as friction and heat rather than productive output.")
 
 # ═══════════════════════════════════════════
 # TAB 3: SQL INSIGHTS
@@ -1054,131 +930,266 @@ with tab4:
 # TAB 5: ACTION PLAN
 # ═══════════════════════════════════════════
 with tab5:
-    st.markdown("## 💼 Strategic Action Plan — Data-Driven Roadmap")
+    # ── SUMMARY BANNER ──
+    components.html("""
+<!DOCTYPE html><html><head>
+<style>* {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}body{background:transparent;}</style>
+</head><body>
+<div style="background:linear-gradient(135deg,#0d0a14,#120d1c);border:1px solid rgba(167,139,250,0.2);border-radius:14px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:4px">
+  <div>
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#a78bfa;margin-bottom:6px;font-weight:700">💼 STRATEGIC ACTION PLAN</div>
+    <div style="font-size:17px;font-weight:800;color:#fff">4-Step Optimization Roadmap &mdash; <span style="color:#a78bfa">₺6–8M/yr Impact</span></div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px">Each initiative backed by statistical findings · Ranked by urgency &amp; ROI</div>
+  </div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap">
+    <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#f87171;line-height:1">₺454K</div><div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px">Quick Win</div></div>
+    <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#fb923c;line-height:1">₺5–7M</div><div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px">Highest ROI</div></div>
+    <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#fbbf24;line-height:1">9.6%→5%</div><div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px">Fail Reduction</div></div>
+    <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#4ade80;line-height:1">100%</div><div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px">ML Accuracy</div></div>
+  </div>
+</div>
+</body></html>
+    """, height=110, scrolling=False)
 
-    st.markdown("""
-    <div style='background:rgba(0,206,209,0.08);border-left:4px solid #00ced1;padding:16px;border-radius:8px;margin-bottom:24px'>
-        <div style='font-size:13px;color:#fff;line-height:1.8'>
-            This analysis translates into <strong style='color:#00ced1'>4 strategic initiatives</strong>
-            with clear timelines, ownership, and ROI projections. Each recommendation is backed by
-            the statistical findings in previous tabs.
-        </div>
+    # ── 4 INITIATIVE CARDS ──
+    components.html("""
+<!DOCTYPE html><html><head>
+<style>
+* {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:transparent;}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.card{background:#0d1117;border-radius:14px;overflow:hidden;border:1px solid #1e2738;transition:transform 0.15s,border-color 0.15s;}
+.card:hover{transform:translateY(-3px);}
+.urgent{border-color:rgba(248,113,113,0.35)!important;}
+.high{border-color:rgba(251,146,60,0.35)!important;}
+.medium{border-color:rgba(251,191,36,0.35)!important;}
+.strategic{border-color:rgba(74,222,128,0.35)!important;}
+.card-top{padding:16px 16px 12px;border-bottom:1px solid #1e2738;}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.urgent .badge{background:rgba(248,113,113,0.15);color:#f87171;}
+.high .badge{background:rgba(251,146,60,0.15);color:#fb923c;}
+.medium .badge{background:rgba(251,191,36,0.15);color:#fbbf24;}
+.strategic .badge{background:rgba(74,222,128,0.15);color:#4ade80;}
+.icon{font-size:26px;display:block;margin-bottom:9px;}
+.ctitle{font-size:13px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:3px;}
+.csub{font-size:10px;color:#4a6072;}
+.metrics{padding:12px 16px;display:flex;flex-direction:column;gap:7px;}
+.mrow{display:flex;justify-content:space-between;align-items:center;}
+.mkey{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;}
+.mval{font-size:11px;font-weight:700;}
+.urgent .mval{color:#f87171;} .high .mval{color:#fb923c;} .medium .mval{color:#fbbf24;} .strategic .mval{color:#4ade80;}
+.foot{padding:10px 16px;background:rgba(255,255,255,0.02);border-top:1px solid #1e2738;}
+.pbar{height:3px;background:#1e2738;border-radius:2px;overflow:hidden;margin-bottom:5px;}
+.pfill{height:100%;border-radius:2px;}
+.urgent .pfill{background:#f87171;width:95%;}
+.high .pfill{background:#fb923c;width:75%;}
+.medium .pfill{background:#fbbf24;width:55%;}
+.strategic .pfill{background:#4ade80;width:30%;}
+.plabel{display:flex;justify-content:space-between;font-size:9px;color:#4a6072;}
+</style>
+</head><body>
+<div class="grid">
+  <div class="card urgent">
+    <div class="card-top">
+      <span class="badge">&#128308; URGENT · 0–30 days</span>
+      <span class="icon">&#128296;</span>
+      <div class="ctitle">Bottom 10%<br>Emergency Maintenance</div>
+      <div class="csub">1,000 least efficient machines</div>
     </div>
-    """, unsafe_allow_html=True)
+    <div class="metrics">
+      <div class="mrow"><span class="mkey">Savings</span><span class="mval">&#8378;454K/yr</span></div>
+      <div class="mrow"><span class="mkey">Payback</span><span class="mval">3–4 months</span></div>
+      <div class="mrow"><span class="mkey">Machines</span><span class="mval">1,000 units</span></div>
+    </div>
+    <div class="foot"><div class="pbar"><div class="pfill"></div></div><div class="plabel"><span>Priority Score</span><span>95/100</span></div></div>
+  </div>
+  <div class="card high">
+    <div class="card-top">
+      <span class="badge">&#128992; HIGH ROI · 30–90 days</span>
+      <span class="icon">&#9881;&#65039;</span>
+      <div class="ctitle">L-Type RPM<br>Optimization</div>
+      <div class="csub">256 high-risk L-type units</div>
+    </div>
+    <div class="metrics">
+      <div class="mrow"><span class="mkey">Savings</span><span class="mval">&#8378;5–7M/yr</span></div>
+      <div class="mrow"><span class="mkey">ROI</span><span class="mval">800–1100%</span></div>
+      <div class="mrow"><span class="mkey">Cost Base</span><span class="mval">60% of fleet</span></div>
+    </div>
+    <div class="foot"><div class="pbar"><div class="pfill"></div></div><div class="plabel"><span>Priority Score</span><span>75/100</span></div></div>
+  </div>
+  <div class="card medium">
+    <div class="card-top">
+      <span class="badge">&#128993; RISK MGMT · 60–120 days</span>
+      <span class="icon">&#128737;&#65039;</span>
+      <div class="ctitle">M-Type Failure<br>Prevention</div>
+      <div class="csub">125 units · 9.6% failure rate</div>
+    </div>
+    <div class="metrics">
+      <div class="mrow"><span class="mkey">Savings</span><span class="mval">&#8378;300–400K</span></div>
+      <div class="mrow"><span class="mkey">Target Rate</span><span class="mval">9.6% → 5%</span></div>
+      <div class="mrow"><span class="mkey">MTBF Gain</span><span class="mval">+40%</span></div>
+    </div>
+    <div class="foot"><div class="pbar"><div class="pfill"></div></div><div class="plabel"><span>Priority Score</span><span>55/100</span></div></div>
+  </div>
+  <div class="card strategic">
+    <div class="card-top">
+      <span class="badge">&#128994; STRATEGIC · 90–180 days</span>
+      <span class="icon">&#129302;</span>
+      <div class="ctitle">Deploy ML<br>Scoring Model</div>
+      <div class="csub">All machines · Real-time scoring</div>
+    </div>
+    <div class="metrics">
+      <div class="mrow"><span class="mkey">Accuracy</span><span class="mval">100%</span></div>
+      <div class="mrow"><span class="mkey">Reactive ↓</span><span class="mval">30% reduction</span></div>
+      <div class="mrow"><span class="mkey">Scalability</span><span class="mval">Unlimited</span></div>
+    </div>
+    <div class="foot"><div class="pbar"><div class="pfill"></div></div><div class="plabel"><span>Priority Score</span><span>Strategic</span></div></div>
+  </div>
+</div>
+</body></html>
+    """, height=290, scrolling=False)
 
-    with st.expander("🔴 **INITIATIVE 1: Emergency Intervention — Bottom 10% Efficiency**", expanded=True):
-        col1, col2 = st.columns([2, 1])
-        with col1:
+    # ── EXPANDER DETAILS (kapalı başlayan, tıklanınca açılan) ──
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:10px;font-weight:700'>📋 INITIATIVE DETAILS — click to expand</div>", unsafe_allow_html=True)
+
+    with st.expander("🔴 Initiative 1 — Bottom 10% Emergency Maintenance", expanded=False):
+        d1, d2 = st.columns(2)
+        with d1:
             st.markdown("""
-**Problem Statement:**
-1,000 machines (10% of fleet) operate at **47% below average efficiency** (30.20 vs 38.00).
+##### 📋 Action Steps
+1. **Identify** worst 100 machines (efficiency < 25) — immediate inspection list
+2. **Diagnose:** RPM controller calibration · tool condition · bearing wear
+3. **Retune** to optimal zone: 1,400–1,800 RPM · 35–45 Nm torque
+4. **Track KPI:** Average efficiency 30.2 → 36.0 within 30 days
 
-**Root Cause Analysis:**
-These machines exhibit RPM > 2700 (over-speed stress) OR RPM < 1200 (under-load), Torque < 10 Nm (insufficient useful work output), or Tool wear > 200 min (maintenance overdue).
-
-**Recommended Action:**
-1. Prioritize worst 100 machines first (efficiency < 25)
-2. Check: RPM controller calibration, tool condition, bearing wear
-3. Retune to optimal zone: 1400-1800 RPM, 35-45 Nm torque
-
-**Expected Outcomes:** ₺454,000/year energy cost recovery · 50% reduction in failure rate · Payback: 3-4 months
-
-**Implementation:** Owner: Maintenance Engineering Lead · Timeline: 0-30 days · KPI: Average efficiency 30.2 → 36.0
+**Owner:** Maintenance Engineering Lead &nbsp;|&nbsp; **Timeline:** 0–30 days
             """)
-        with col2:
-            st.metric("🎯 Target Machines", "1,000", delta="-47% efficiency")
-            st.metric("💰 Annual Savings", "₺454K")
-            st.metric("📅 Timeline", "0-30 days")
-            st.metric("📈 Payback Period", "3-4 months")
-
-    with st.expander("🟠 **INITIATIVE 2: Volume Impact — L-Type RPM Optimization**"):
-        col1, col2 = st.columns([2, 1])
-        with col1:
+        with d2:
             st.markdown("""
-**Problem Statement:**
-L-type machines = 60% of total energy cost (₺65.5M/year). 256 high-risk L-type units operate outside 1139-1895 RPM optimal zone.
-
-**Recommended Action:**
-1. Install RPM sensors on 256 high-risk L-type machines
-2. Set soft limits at 1895 RPM (alert) and hard limits at 2100 RPM (auto-reduce)
-3. Operator training: "Stay in the green zone (1400-1800 RPM)"
-4. Process engineering review: Why do some operations require >1900 RPM?
-
-**Expected Outcomes:** 8-12% energy reduction · ₺5-7M/year cost avoidance · Highest ROI initiative
-
-**Implementation:** Owner: Operations Manager + Process Engineering · Timeline: 30-90 days · KPI: % L-type machines in 1400-1800 RPM zone (target 85%+)
+##### 🎯 Expected Outcomes
+- 💰 **₺454,000/year** energy cost recovery
+- 📉 **50% reduction** in failure rate for bottom cohort
+- ⚡ **Payback period:** 3–4 months
+- 📊 **Root cause:** RPM > 2,700 or < 1,200 · Torque < 10 Nm · Tool wear > 200 min
             """)
-        with col2:
-            st.metric("💼 Cost Base", "₺65.5M/yr", delta="60% of total")
-            st.metric("💰 Savings Potential", "₺5-7M/yr")
-            st.metric("📅 Timeline", "30-90 days")
-            st.metric("📊 ROI", "800-1100%")
+            a1, a2 = st.columns(2)
+            with a1: st.metric("💰 Annual Savings", "₺454K")
+            with a2: st.metric("📅 Payback", "3–4 mo")
 
-    with st.expander("🟡 **INITIATIVE 3: Risk Mitigation — M-Type Failure Prevention**"):
-        col1, col2 = st.columns([2, 1])
-        with col1:
+    with st.expander("🟠 Initiative 2 — L-Type RPM Optimization", expanded=False):
+        d1, d2 = st.columns(2)
+        with d1:
             st.markdown("""
-**Problem Statement:**
-M-type machines have **9.6% failure rate** — highest in fleet (vs 8.6% L-type, 2.7% H-type).
+##### 📋 Action Steps
+1. **Install** RPM sensors on 256 high-risk L-type machines
+2. **Set limits:** Soft alert at 1,895 RPM · Hard cap at 2,100 RPM (auto-reduce)
+3. **Train** operators: "Stay in the green zone (1,400–1,800 RPM)"
+4. **Review:** Why do some operations require >1,900 RPM?
 
-**Recommended Action:**
-1. **Phase 1 (Week 1-2):** Failure mode analysis on last 50 M-type failures
-2. **Phase 2 (Week 3-4):** Sensor data audit — compare M vs L vs H operating patterns
-3. **Phase 3 (Week 5-8):** Pilot predictive maintenance on 20 M-type machines
-4. **Phase 4 (Week 9-16):** Fleet-wide rollout if pilot succeeds
-
-**Expected Outcomes:** Failure rate 9.6% → 5% · ₺300-400K/year downtime savings · MTBF improvement 40%
-
-**Implementation:** Owner: Reliability Engineering + Data Analytics · Timeline: 60-120 days
+**Owner:** Operations Manager + Process Engineering &nbsp;|&nbsp; **Timeline:** 30–90 days
             """)
-        with col2:
-            st.metric("⚠️ Current Failure Rate", "9.6%", delta="Highest", delta_color="inverse")
-            st.metric("🎯 Target Rate", "5.0%")
-            st.metric("💰 Downtime Savings", "₺300-400K/yr")
-            st.metric("📅 Timeline", "60-120 days")
-
-    with st.expander("🟢 **INITIATIVE 4: Scale & Automation — Deploy ML Scoring**"):
-        col1, col2 = st.columns([2, 1])
-        with col1:
+        with d2:
             st.markdown("""
-**Problem Statement:**
-Current analysis is retrospective — can't prevent NEW machines from becoming high-risk.
-
-**Recommended Action:**
-- **Phase 1 (Day 1-30):** Integrate model with SCADA/MES, set up data pipeline
-- **Phase 2 (Day 31-90):** Pilot on 200 machines, auto-flag at Priority 3+
-- **Phase 3 (Day 91-180):** Fleet-wide rollout, integrate with CMMS (auto work orders)
-
-**Expected Outcomes:** 30% reduction in reactive maintenance · Scalable to future fleet expansion · No marginal cost
-
-**Implementation:** Owner: Data Engineering + IT · Timeline: 90-180 days · KPI: 60% ML-driven actions by Month 12
+##### 🎯 Expected Outcomes
+- 💰 **₺5–7M/year** cost avoidance (8–12% energy reduction)
+- 📊 **ROI:** 800–1,100% — highest in portfolio
+- 🎯 **Target:** 85%+ L-type machines in 1,400–1,800 RPM zone
+- ⚡ **Why:** L-type = 60% of ₺65.5M total fleet energy cost
             """)
-        with col2:
-            st.metric("🤖 Model Accuracy", "100%")
-            st.metric("📅 Timeline", "90-180 days")
-            st.metric("📈 Scalability", "Unlimited")
-            st.metric("💡 Long-term Impact", "Strategic")
+            a1, a2 = st.columns(2)
+            with a1: st.metric("💰 Savings", "₺5–7M/yr")
+            with a2: st.metric("📊 ROI", "800–1100%")
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### 📊 Initiative Comparison Matrix")
-    comparison_df = pd.DataFrame({
-        'Initiative': ['1️⃣ Bottom 10% Emergency','2️⃣ L-Type RPM Optimization','3️⃣ M-Type Risk Mitigation','4️⃣ ML Model Deployment'],
-        'Financial Impact': ['₺454K/yr','₺5-7M/yr','₺300-400K/yr','30% reactive ↓'],
-        'Timeline': ['0-30 days','30-90 days','60-120 days','90-180 days'],
-        'Complexity': ['Low','Medium','High','High'],
-        'ROI': ['High','Very High','Medium','Strategic'],
-        'Priority': ['🔴 Urgent','🟠 High','🟡 Medium','🟢 Strategic']
+    with st.expander("🟡 Initiative 3 — M-Type Failure Prevention", expanded=False):
+        d1, d2 = st.columns(2)
+        with d1:
+            st.markdown("""
+##### 📋 Action Steps
+1. **Week 1–2:** Failure mode analysis on last 50 M-type failures
+2. **Week 3–4:** Sensor data audit — compare M vs L vs H patterns
+3. **Week 5–8:** Pilot predictive maintenance on 20 M-type machines
+4. **Week 9–16:** Fleet-wide rollout if pilot succeeds
+
+**Owner:** Reliability Engineering + Data Analytics &nbsp;|&nbsp; **Timeline:** 60–120 days
+            """)
+        with d2:
+            st.markdown("""
+##### 🎯 Expected Outcomes
+- 📉 Failure rate **9.6% → 5.0%** (M-type)
+- 💰 **₺300–400K/year** downtime savings
+- 🔧 **MTBF improvement:** +40%
+- ⚠️ Context: M-type has highest per-unit risk in fleet
+            """)
+            a1, a2 = st.columns(2)
+            with a1: st.metric("📉 Target Rate", "5.0%")
+            with a2: st.metric("💰 Savings", "₺300–400K")
+
+    with st.expander("🟢 Initiative 4 — Deploy ML Scoring Model", expanded=False):
+        d1, d2 = st.columns(2)
+        with d1:
+            st.markdown("""
+##### 📋 Action Steps
+- **Day 1–30:** Integrate model with SCADA/MES · set up data pipeline
+- **Day 31–90:** Pilot on 200 machines · auto-flag at Priority 3+
+- **Day 91–180:** Fleet-wide rollout · integrate with CMMS (auto work orders)
+
+**Owner:** Data Engineering + IT &nbsp;|&nbsp; **Timeline:** 90–180 days
+            """)
+        with d2:
+            st.markdown("""
+##### 🎯 Expected Outcomes
+- 🤖 **100% accuracy** — Random Forest priority scoring
+- 📉 **30% reduction** in reactive maintenance
+- ♾️ **Scalable** to future fleet expansion at no marginal cost
+- 🎯 **KPI:** 60% ML-driven actions by Month 12
+            """)
+            a1, a2 = st.columns(2)
+            with a1: st.metric("🤖 Accuracy", "100%")
+            with a2: st.metric("📉 Reactive ↓", "30%")
+
+    # ── TIMELINE (Gantt) ──
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:10px;font-weight:700'>📅 IMPLEMENTATION TIMELINE</div>", unsafe_allow_html=True)
+    timeline_data = pd.DataFrame({
+        'Initiative': ['1 — Bottom 10%', '2 — L-Type RPM', '3 — M-Type Risk', '4 — ML Deploy'],
+        'Start': [0, 30, 60, 90],
+        'Duration': [30, 60, 60, 90],
+        'Color': ['#f87171', '#fb923c', '#fbbf24', '#4ade80']
     })
-    st.dataframe(comparison_df, hide_index=True, use_container_width=True, height=220)
-
-    st.success("✅ **Execution Roadmap:** Run Initiative 1 & 2 in parallel (0-90 days) for immediate impact. Launch Initiative 3 at day 60. Deploy Initiative 4 as infrastructure project (day 90+).\n\n**Total financial impact:** ₺6-8M/year (recurring) · **One-time investment:** ~₺500-700K · **Net 3-year ROI:** 900-1200%")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### 📅 Implementation Timeline")
-
-    timeline_data = pd.DataFrame({'Initiative':['1 - Bottom 10%','2 - L-Type RPM','3 - M-Type Risk','4 - ML Deploy'],'Start':[0,30,60,90],'Duration':[30,60,60,90],'Color':['#f87171','#fb923c','#fbbf24','#4ade80']})
     fig_gantt = go.Figure()
     for _, row in timeline_data.iterrows():
-        fig_gantt.add_trace(go.Bar(x=[row['Duration']],y=[row['Initiative']],orientation='h',name=row['Initiative'],marker=dict(color=row['Color']),base=[row['Start']],hovertemplate=f"<b>{row['Initiative']}</b><br>Start: Day {row['Start']}<br>Duration: {row['Duration']} days<extra></extra>"))
-    fig_gantt.update_layout(height=300,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',title='Days from Program Start',color='#cdd9e5',range=[0,200]),yaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),showlegend=False,margin=dict(l=120,r=20,t=20,b=50))
+        fig_gantt.add_trace(go.Bar(
+            x=[row['Duration']], y=[row['Initiative']], orientation='h',
+            name=row['Initiative'], marker=dict(color=row['Color']),
+            base=[row['Start']],
+            hovertemplate=f"<b>{row['Initiative']}</b><br>Start: Day {row['Start']}<br>Duration: {row['Duration']} days<extra></extra>"
+        ))
+    fig_gantt.update_layout(
+        height=240, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+        font=dict(color='#cdd9e5', size=10),
+        xaxis=dict(gridcolor='#1e2738', title='Days from Program Start', color='#cdd9e5', range=[0, 200],
+                   tickvals=[0, 30, 60, 90, 120, 150, 180]),
+        yaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+        showlegend=False, margin=dict(l=140, r=20, t=10, b=40)
+    )
     st.plotly_chart(fig_gantt, use_container_width=True)
+
+    # ── ROI CALLOUT ──
+    components.html("""
+<!DOCTYPE html><html><head>
+<style>* {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}body{background:transparent;}</style>
+</head><body>
+<div style="background:linear-gradient(135deg,rgba(74,222,128,0.06),rgba(0,206,209,0.06));border:1px solid rgba(74,222,128,0.2);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+  <div>
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#4ade80;margin-bottom:6px;font-weight:700">&#9989; TOTAL PROGRAM IMPACT</div>
+    <div style="font-size:14px;font-weight:700;color:#fff;line-height:1.6">Run Initiative 1 &amp; 2 in parallel (0–90 days) for immediate impact.<br><span style="color:rgba(255,255,255,0.5);font-size:12px;font-weight:400">Launch 3 at day 60 · Deploy 4 as infrastructure (day 90+) · One-time investment: ~&#8378;500–700K</span></div>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap">
+    <div><div style="font-size:24px;font-weight:900;color:#4ade80;">&#8378;6–8M</div><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Annual Impact</div></div>
+    <div><div style="font-size:24px;font-weight:900;color:#00ced1;">900%+</div><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">3-Year ROI</div></div>
+    <div><div style="font-size:24px;font-weight:900;color:#a78bfa;">180 days</div><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Full Rollout</div></div>
+  </div>
+</div>
+</body></html>
+    """, height=110, scrolling=False)
