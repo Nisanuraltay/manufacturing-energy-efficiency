@@ -1,325 +1,351 @@
 # ⚡ Manufacturing Energy Efficiency Analysis
 
+> **End-to-end data analytics project** · EDA → Feature Engineering → SQL → Machine Learning → Interactive Dashboard
+
+[![Streamlit App](https://img.shields.io/badge/Live_Dashboard-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit)](https://nisanuraltay-manufacturing-energy-efficiency.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Jupyter](https://img.shields.io/badge/Notebooks-3-F37626?style=for-the-badge&logo=jupyter&logoColor=white)](notebooks/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+---
+
+## 📋 Table of Contents
+
+- [Project Story](#-project-story)
+- [Business Problem](#-business-problem)
+- [Dataset](#-dataset)
+- [Key Findings](#-key-findings)
+- [Analysis Pipeline](#-analysis-pipeline)
+- [Interactive Dashboard](#-interactive-dashboard)
+- [Strategic Action Plan](#-strategic-action-plan)
+- [Project Structure](#-project-structure)
+- [Technologies](#-technologies)
+- [How to Run](#-how-to-run)
+- [Limitations](#-data--model-limitations)
+- [Contact](#-contact)
+
+---
+
 ## 👋 Project Story
 
-This project is part of my **career transition** into data analytics. I wanted to demonstrate not just technical skills, but how I approach real business problems with data-driven thinking.
+This project began with a simple question: *"What if I reframe a predictive maintenance dataset as an energy efficiency problem?"*
 
-### 💡 How the Idea Was Born
+Instead of just building a classifier, I approached this as a consultant would — starting with a business problem, forming hypotheses, testing them with data, and delivering actionable financial recommendations.
 
-I found a "predictive maintenance" dataset on Kaggle and thought:
-> *"What if I reframe this as an energy efficiency problem instead?"*
+### 🔄 My First Hypothesis Was Wrong
 
-I asked myself: *"If I were a consultant at a manufacturing facility, how would I approach this?"* 
+I initially assumed high-risk machines (extreme RPM) were doing **"light work"** — low torque seemed to suggest easy loads.
 
-That question shaped the entire analysis - from business context to ROI calculations.
+**The data proved otherwise.** Their failure rate was **2.6× higher** than normal machines. High RPM + low torque doesn't mean easy work — it means the machine is spinning fast but producing very little useful output. Energy is lost to friction and heat.
 
-### 🎢 Challenges I Faced
+> **Lesson:** Test every assumption with data before drawing conclusions.
 
-**Challenge 1: My first hypothesis was wrong!**
+### ⚠️ The Energy Formula Was Misleading
 
-I initially thought high-risk machines were doing "light work" because:
-- High RPM but low torque
-- Seemed logical: Light materials = less power needed
+A simple mechanical power formula `P = (RPM × Torque × 2π) / 60,000` showed high-risk machines consuming *less* energy on paper. But the formula ignores friction losses (which scale with RPM²), motor inefficiency at high speeds, and idle current draw.
 
-But when I **tested this hypothesis** with the data, the failure rate was **2.6x higher!** This proved inefficiency, not light work.
-
-**Lesson learned:** Never trust assumptions without testing them! 📊
-
-**Challenge 2: Energy formula gave misleading results**
-
-Simple power formula showed high-risk machines consuming "less energy." But this ignored:
-- Friction losses (increases with RPM²)
-- Motor inefficiency at high speeds
-- Idle current draw
-
-**Lesson learned:** Domain knowledge matters - formulas have limits! ⚠️
-
-I pivoted to **failure cost analysis** instead - more measurable and realistic.
-
-### 🎯 What I Accomplished
-
-- ✅ Cleaned and analyzed 10,000 machine records
-- ✅ Performed hypothesis testing (data-driven decisions)
-- ✅ Applied best practices (labeled outliers instead of deleting)
-- ✅ Translated technical findings into business value (227K TL/year)
-- ✅ Acknowledged formula limitations honestly
+**Decision:** I acknowledged the formula's limitations explicitly and pivoted to **failure cost analysis** — more measurable, more credible, more business-relevant.
 
 ---
 
 ## 🎯 Business Problem
 
-A manufacturing facility operates 300 machines 24/7 with monthly electricity costs of ~$42,000.
+A manufacturing facility runs **10,000 machines** continuously. The challenge: identify which machines are operating inefficiently, quantify the financial impact, and prioritize interventions.
 
-**Objective:** Identify energy efficiency optimization opportunities targeting 10-15% savings.
-
-**Potential Value:** $50,000 - $75,000 per year in savings
+| Metric | Value |
+|--------|-------|
+| Fleet Size | 10,000 machines |
+| High-Risk Machines Detected | 418 (4.18%) |
+| Annual Cost Exposure | ₺2.96M |
+| Optimization Potential | ₺227K–7M/year |
+| Analysis Method | EDA → Feature Eng → SQL → ML → Dashboard |
 
 ---
 
 ## 📊 Dataset
 
-**Source:** [Kaggle - Machine Predictive Maintenance Classification](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification)
+**Source:** [Kaggle — Machine Predictive Maintenance Classification](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification)
 
-- **Size:** 10,000 rows × 10 columns
-- **Content:** Machine sensor data (temperature, RPM, torque, wear)
-- **Reframing:** Predictive maintenance → Energy efficiency analysis
+| Property | Detail |
+|----------|--------|
+| Records | 10,000 machine observations |
+| Raw Features | 10 columns (temperature, RPM, torque, wear, failure type) |
+| Engineered Features | +8 (power, efficiency score, cost/hr, priority score, etc.) |
+| Machine Types | L (low), M (medium), H (high) |
+| Data Quality | Zero missing values · Zero duplicates |
+
+**Reframing:** The original dataset is designed for binary failure prediction. This project reframes it as an **energy efficiency optimization problem** — identifying which machines waste energy, why, and what to do about it.
 
 ---
 
 ## 🔍 Key Findings
 
-### 1. High-Risk Machine Detection
-- **418 machines** (4.18%) exhibit abnormal operational profiles
-- Average RPM: **2102** (normal: 1514) → 39% faster
-- Average Torque: **18.9 Nm** (normal: 40.9) → 54% lower
+### 1 · High-Risk Machine Detection
 
-### 2. Proof of Inefficiency
-- High speed + low torque = **wasted energy**
-- Failure rate: **8.37%** (normal: 3.17%) → **2.6x higher!**
+Using **IQR outlier detection** on RPM (safe zone: 1,139–1,895 RPM):
 
-### 3. Business Impact
-- High-risk machines cost **454,826 TL/year** in failures
-- **Optimization potential: ~227,000 TL/year**
+| Group | Count | Avg RPM | Avg Torque | Failure Rate |
+|-------|-------|---------|------------|--------------|
+| Normal | 9,582 | 1,514 | 40.9 Nm | 3.17% |
+| High-Risk | 418 | 2,102 | 18.9 Nm | **8.37%** |
+| **Difference** | — | **+39%** | **−54%** | **2.6× higher** |
 
-### 4. Prioritization
-- **L-type machines:** 256 units (61%) → Highest priority
-- **M-type machines:** 125 units (30%)
-- **H-type machines:** 37 units (9%)
+### 2 · Root Cause: Wrong Operating Point
+
+High-risk machines run at high speed but generate low torque — the worst combination for efficiency:
+
+```
+P = (RPM × Torque × 2π) / 60,000
+```
+
+High RPM + Low Torque = **energy converted to friction and heat, not useful work.**
+
+Confirmed by the efficiency gap:
+
+| Group | Avg Efficiency Score |
+|-------|---------------------|
+| Normal | 38.45 |
+| High-Risk | 27.76 |
+| **Gap** | **−27.8%** |
+
+### 3 · Fleet Cost Segmentation (SQL Analysis)
+
+| Machine Type | High-Risk Units | Failure Rate | Annual Cost |
+|--------------|-----------------|--------------|-------------|
+| L-Type | 256 (61%) | 8.6% | ₺1,817,431 |
+| M-Type | 125 (30%) | **9.6%** | ₺884,486 |
+| H-Type | 37 (9%) | 2.7% | ₺258,766 |
+
+> L-type = highest total cost (volume). M-type = highest per-unit failure risk.
+
+### 4 · Machine Learning Results
+
+**Random Forest** predicting optimization priority (0–5):
+
+| Metric | Value |
+|--------|-------|
+| Algorithm | Random Forest (100 trees, max_depth=10) |
+| Accuracy | 100% on test set |
+| #1 Feature | RPM (42% importance) |
+| Cross-validation | 5-fold |
+
+Feature importance ranking:
+
+| Rank | Feature | Importance |
+|------|---------|-----------|
+| 1 | Rotational speed (RPM) | 42% |
+| 2 | Efficiency score | 28% |
+| 3 | Torque | 12% |
+| 4 | Power consumption | 8% |
+| 5–7 | Failure status, tool wear, temp diff | 10% |
+
+---
+
+## 🔬 Analysis Pipeline
+
+### Notebook 1 · Data Exploration [`01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb)
+
+**Goal:** Understand the data, detect anomalies, test hypotheses.
+
+- Data type validation and correction
+- Duplicate check — zero found
+- **IQR outlier detection** on RPM → 418 high-risk machines flagged
+- **Hypothesis test:** "High-risk machines do light work" → ❌ Rejected (failure rate 2.6× higher)
+- Failure cost estimate: ₺454K/year for high-risk group
+- **Key decision:** Label outliers instead of deleting — high RPM may reflect a different but valid operating state
+
+---
+
+### Notebook 2 · Feature Engineering [`02_feature_engineering.ipynb`](notebooks/02_feature_engineering.ipynb)
+
+**Goal:** Build business-meaningful metrics from raw sensor data.
+
+| Feature | Formula / Method | Business Meaning |
+|---------|-----------------|------------------|
+| `power_consumption_kw` | `(RPM/1000) × (Torque/100) × 1.73` | Estimated mechanical power |
+| `calculated_power_kw` | `(RPM × Torque × 2π) / 60,000` | Exact mechanical power |
+| `efficiency_score` | `Torque / power_consumption_kw` | Work output per unit of energy |
+| `cost_per_hour_tl` | `power_kw × 1.2 TL/kWh` | Hourly electricity cost |
+| `shift` | Torque-based proxy | Shift-based cost variation |
+| `energy_category` | Low / Medium / High thresholds | Consumption classification |
+| `optimization_priority` | Weighted score 0–5 | Maintenance urgency |
+| `high_risk_rpm` | IQR flag (0/1) | Anomaly label |
+
+*Note: The simplified power formula captures mechanical output only. Friction losses, motor inefficiency, and idle draw are not included. This is documented explicitly; the efficiency score and failure rate serve as primary business metrics.*
+
+---
+
+### Notebook 3 · SQL Analysis & Modeling [`03_sql_modeling.ipynb`](notebooks/03_sql_modeling.ipynb)
+
+**Goal:** Answer three business questions with SQL, then build a deployable scoring model.
+
+**SQL queries (SQLite on 10,000 records):**
+
+```sql
+-- Query 1: Annual energy cost by machine type
+SELECT Type, COUNT(*) AS machines,
+       ROUND(AVG(efficiency_score), 2) AS avg_efficiency,
+       ROUND(SUM(cost_per_hour_tl) * 24 * 365, 0) AS annual_cost_tl
+FROM machines GROUP BY Type ORDER BY annual_cost_tl DESC;
+
+-- Query 2: Bottom 10% — least efficient machines
+SELECT UDI, Type, "Rotational speed [rpm]" AS RPM,
+       efficiency_score, optimization_priority
+FROM machines
+ORDER BY efficiency_score ASC
+LIMIT (SELECT COUNT(*) * 0.1 FROM machines);
+
+-- Query 3: High-risk segmentation by type
+SELECT Type, COUNT(*) AS count,
+       ROUND(AVG("Rotational speed [rpm]"), 0) AS avg_rpm,
+       ROUND(AVG(Target) * 100, 1) AS failure_rate_pct,
+       ROUND(SUM(cost_per_hour_tl) * 24 * 365, 0) AS annual_cost_tl
+FROM machines WHERE high_risk_rpm = 1 GROUP BY Type;
+```
+
+**Model training:**
+```python
+from sklearn.ensemble import RandomForestClassifier
+
+features = ['Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]',
+            'temp_difference', 'power_consumption_kw', 'efficiency_score', 'Target']
+
+model = RandomForestClassifier(n_estimators=100, max_depth=10,
+                               min_samples_split=20, random_state=42)
+model.fit(X_train, y_train)  # Accuracy: 100%
+```
+
+---
+
+## 📈 Interactive Dashboard
+
+**Live:** [nisanuraltay-manufacturing-energy-efficiency.streamlit.app](https://nisanuraltay-manufacturing-energy-efficiency.streamlit.app/)
+
+Built with Streamlit. Includes a 3-page navigation flow and 5 analysis tabs:
+
+| Tab | Content |
+|-----|---------|
+| ⚡ Fleet Health | RPM distribution, failure types, machine type breakdown, priority scoring |
+| 🔴 Risk & Cost | High-risk segmentation by type, energy categories, tool wear |
+| 📋 SQL Insights | Live SQL query results, benchmark comparison |
+| 🤖 ML Model | Feature importance, confusion matrix, real-time prediction simulator |
+| 💼 Action Plan | 4-initiative roadmap, Gantt chart, ROI summary |
+
+**Sidebar filters:** Machine type · Risk status · Priority range · RPM range
+
+---
+
+## 💼 Strategic Action Plan
+
+| | Initiative | Machines | Impact | Timeline |
+|--|-----------|----------|--------|----------|
+| 🔴 1 | Bottom 10% Emergency Maintenance | 1,000 | ₺454K/yr | 0–30 days |
+| 🟠 2 | L-Type RPM Optimization | 256 | ₺5–7M/yr | 30–90 days |
+| 🟡 3 | M-Type Failure Prevention | 125 | ₺300–400K/yr | 60–120 days |
+| 🟢 4 | Deploy ML Scoring Model | All | 30% reactive ↓ | 90–180 days |
+
+**Total program:** ₺6–8M/year annual impact · ~₺500–700K one-time investment · ~900% 3-year ROI
 
 ---
 
 ## 📂 Project Structure
+
 ```
 manufacturing-energy-efficiency/
 │
 ├── data/
-│   ├── raw/                          # Raw data
-│   └── processed/                    # Cleaned data
+│   ├── raw/
+│   │   └── predictive_maintenance.csv              # Original Kaggle data
+│   └── processed/
+│       └── predictive_maintenance_final_data.csv   # 18-column engineered dataset
 │
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb    ✅ Completed
-│   ├── 02_feature_engineering.ipynb  🔄 In progress
-│   ├── 03_modeling.ipynb             ⏳ Planned
-│   └── 04_sql_analysis.ipynb         ⏳ Planned
+│   ├── 01_data_exploration.ipynb     ✅ EDA · outlier detection · hypothesis testing
+│   ├── 02_feature_engineering.ipynb  ✅ 8 engineered features · cost metrics
+│   └── 03_sql_modeling.ipynb         ✅ SQL queries · Random Forest model
 │
-├── sql/
-│   └── energy_analysis_queries.sql
-│
-├── dashboards/
-│   └── energy_dashboard.pbix
-│
-├── reports/
-│   └── optimization_recommendations.pdf
-│
-├── images/                           # Visual materials
-│
+├── app.py                             ✅ Streamlit dashboard (5 tabs · 3 pages)
+├── requirements.txt
 ├── .gitignore
-├── README.md
-└── requirements.txt
+└── README.md
 ```
 
 ---
 
-## 📚 My Learning Journey
+## 🛠️ Technologies
 
-### Technical Skills Developed
-
-**Data Quality:**
-- Data type validation and correction (integer → float)
-- Duplicate detection
-- Outlier detection using IQR method
-- **Decision:** Labeled outliers instead of deleting (real-world high RPM may be valid)
-
-**Statistical Analysis:**
-- Hypothesis testing: "High-risk machines do light work" → False! (failure rate 2.6x higher)
-- Correlation analysis: RPM-Torque negative correlation (-0.87)
-- Comparative analysis: Normal vs High-risk
-
-**Data-Driven Decision Making:**
-- When energy formula was misleading, I pivoted to failure cost analysis
-- Acknowledged domain knowledge gaps and stated assumptions clearly
-
-### Business Skills Developed
-
-**Value Generation:**
-- Translated technical findings into financial impact (TL/year)
-- Calculated cost per failure: 13,000 TL
-- Identified optimization potential: 227,000 TL/year
-
-**Executive Communication:**
-- Used executive summary format
-- Prioritized actions (L-type first)
-- Defined clear next steps
-
-### Problems I Solved
-
-**1. Formula Discrepancy:**
-- Simple energy formula showed high-risk as "low consumption"
-- Solution: Researched physical realities (friction, efficiency)
-- Decision: Used formula with warnings, focused on failure costs
-
-**2. Hypothesis Error:**
-- "Light work" hypothesis seemed logical but was wrong
-- Solution: Tested with data (failure rate, wear, type distribution)
-- Learned: Intuition ≠ Data!
-
-**3. Outlier Decision:**
-- Delete or keep?
-- Solution: Researched best practices, chose labeling
-- Rationale: High RPM may be different machine types, real-world data
-
-### Resources Used
-
-- **Kaggle Notebooks:** EDA techniques and visualization
-- **Medium Articles:** Energy efficiency domain knowledge
-- **Stack Overflow:** Pandas/Plotly troubleshooting
-- **Academic Papers:** Motor energy consumption formulas
-- **Mentorship:** Strategy and decision-making guidance
-
----
-
-## 📓 Analysis Process
-
-### ✅ Completed: Exploratory Data Analysis (EDA)
-
-**What I Did:**
-- Analyzed 10,000 machine records
-- Data quality checks (type correction, duplicate detection)
-- Outlier analysis (IQR method) - detected 418 high-risk machines
-- Hypothesis testing: "Light work" hypothesis tested and rejected
-- **Business value:** Calculated 227K TL/year optimization potential
-
-**Methodology:**
-- ✅ Labeled outliers instead of deleting (best practice)
-- ✅ Conducted hypothesis testing (data-driven decisions)
-- ✅ Interpreted formulas with domain knowledge
-- ✅ Focused on business value
-
-📓 **[Notebook: 01_data_exploration.ipynb](notebooks/01_data_exploration.ipynb)**
-
----
-
-### 🔜 Planned Work
-
-**2. Feature Engineering**
-- Energy consumption metrics (kW, cost/hour)
-- Efficiency scores
-- Shift simulation (day/night rates)
-
-**3. SQL Analysis**
-- Cost segmentation (type/shift-based)
-- Bottom 10% machines by efficiency
-- Optimization prioritization
-
-**4. Predictive Model**
-- "Which machine to optimize?" prediction
-- Feature importance analysis
-- Risk scoring
-
-**5. Power BI Dashboard**
-- Executive summary
-- Machine performance tracking
-- Interactive optimization recommendations
-
----
-
-## 🛠️ Technologies Used
-
-**Analysis & Modeling:**
-- Python 3.x
-- Pandas, NumPy (data manipulation)
-- Matplotlib, Seaborn, Plotly (visualization)
-- Scikit-learn (machine learning)
-
-**Database:**
-- SQLite (local analysis)
-- SQL (cost segmentation)
-
-**Reporting:**
-- Power BI (interactive dashboard)
-- Jupyter Notebook (technical documentation)
-
-**Version Control:**
-- Git & GitHub
+| Category | Tools |
+|----------|-------|
+| Language | Python 3.10+ |
+| Data manipulation | Pandas, NumPy |
+| Visualization | Plotly, Matplotlib, Seaborn |
+| Machine Learning | Scikit-learn (RandomForestClassifier) |
+| Database | SQLite3, SQL |
+| Dashboard | Streamlit, Streamlit Components |
+| Environment | Google Colab, Jupyter Notebook |
+| Deployment | Streamlit Cloud |
+| Version Control | Git, GitHub |
 
 ---
 
 ## 🚀 How to Run
 
-### 1. Clone Repository
+### Clone and install
+
 ```bash
 git clone https://github.com/Nisanuraltay/manufacturing-energy-efficiency.git
 cd manufacturing-energy-efficiency
-```
-
-### 2. Install Requirements
-```bash
 pip install -r requirements.txt
 ```
 
-### 3. Run Notebooks
+### Run dashboard locally
+
 ```bash
-jupyter notebook
+streamlit run app.py
 ```
 
-**Note:** Download dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification) to `data/raw/`
+### Run notebooks
+
+```bash
+jupyter notebook
+# Open notebooks in order: 01 → 02 → 03
+```
+
+> The notebooks were written in Google Colab. Update the `file_path` variable in each notebook to your local data path before running.
 
 ---
 
-## 📌 Project Goals
+## ⚠️ Data & Model Limitations
 
-This project was developed during my **career transition** to demonstrate data analytics capabilities.
+This project uses a **synthetic/simulated dataset** — not real production telemetry. Before any production deployment:
 
-**Focus areas:**
-- ✅ Solving real business problems
-- ✅ Data-driven decision making
-- ✅ Business value calculation (TL/year)
-- ✅ Professional reporting
-- ✅ End-to-end project management
+- **Power formula:** Captures mechanical output only — friction, motor inefficiency, and idle draw are excluded
+- **Cost rates:** 1.2 TL/kWh assumed — verify against actual utility contracts
+- **Model accuracy:** 100% reflects a deterministic priority score derived from input features (not overfitting)
+- **No time series:** Machine degradation over time is not captured
+- **Savings estimates:** Conservative — actual results may vary ±20%
 
----
-
-## 📊 Next Steps
-
-1. ⏳ Feature engineering and energy metrics
-2. ⏳ Deep-dive SQL cost analysis
-3. ⏳ Machine learning model (optimization prioritization)
-4. ⏳ Power BI dashboard development
-5. ⏳ Executive report preparation
+Recommended path to production: pilot on 100–200 machines → measure actual savings → retrain model quarterly with real data.
 
 ---
 
 ## 👤 Contact
 
-**Project Owner:** Nisa Nur Altay
+**Nisa Nur Altay** — Data Analyst
 
-I'm a career changer transitioning into data analytics. This project is part of my portfolio, demonstrating how I approach real business problems.
+Career-changer transitioning into data analytics. This project demonstrates end-to-end analytical thinking: from an ambiguous business problem to a deployable interactive dashboard.
 
-**GitHub:** [github.com/Nisanuraltay](https://github.com/Nisanuraltay)
+- 🐙 GitHub: [github.com/Nisanuraltay](https://github.com/Nisanuraltay)
+- 💼 LinkedIn: [linkedin.com/in/nisanuraltay](https://www.linkedin.com/in/nisanuraltay)
 
-**LinkedIn:** [www.linkedin.com/in/nisanuraltay] 
-
-📧 **Feel free to reach out for feedback or opportunities.**
-
----
-
-## 💭 Feedback & Improvements
-
-I'm continuously improving this project. If you:
-- Notice a technical error
-- Have a different analytical approach to suggest
-- Want to collaborate
-
-**Open an issue or contact me directly!**
-
-Constructive criticism is welcome - I'm here to learn! 🚀
+Feedback, suggestions, and collaboration opportunities are welcome — open an issue or reach out directly.
 
 ---
 
 ## 📄 License
 
-This project is open source under the MIT License.
+Open source under the [MIT License](LICENSE).
 
 ---
 
-**⭐ If you found this project helpful, please consider giving it a star!**
+*⭐ If this project was useful or interesting, a star is appreciated!*
