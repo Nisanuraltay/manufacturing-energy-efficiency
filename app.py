@@ -71,8 +71,8 @@ button[kind="header"] { display: none !important; }
 section[data-testid="stSidebar"] {
     background: #0a0e1a !important;
     border-right: 1px solid rgba(0,206,209,0.12) !important;
-    min-width: 230px !important;
-    max-width: 230px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
 }
 section[data-testid="stSidebar"] > div:first-child { padding: 0 !important; }
 section[data-testid="stSidebar"] .block-container { padding: 0 !important; }
@@ -182,13 +182,18 @@ if st.session_state.page == 'executive':
     </style>
     """, unsafe_allow_html=True)
 
-    col_back, col_title, col_enter = st.columns([1, 4, 1])
+    # ✅ DEĞİŞİKLİK 2: 4 kolon — Skip butonu eklendi
+    col_back, col_title, col_skip, col_enter = st.columns([1, 3, 1, 1])
     with col_back:
         if st.button("← Back"):
             st.session_state.page = 'cover'
             st.rerun()
     with col_title:
         st.markdown("<div style='text-align:center;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding-top:8px'>EXECUTIVE BRIEFING</div>", unsafe_allow_html=True)
+    with col_skip:
+        if st.button("Skip →"):
+            st.session_state.page = 'dashboard'
+            st.rerun()
     with col_enter:
         if st.button("Dashboard →"):
             st.session_state.page = 'dashboard'
@@ -230,104 +235,101 @@ if st.session_state.page == 'executive':
 
     col_left, col_right = st.columns(2)
 
+    # ✅ DEĞİŞİKLİK 1: Problem kartları kısaltıldı — 1 cümle + metrik
     with col_left:
         components.html("""
 <!DOCTYPE html><html><head>
 <style>* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; } body { background:transparent; }</style>
 </head><body>
-<div style="background:linear-gradient(135deg,#100a08,#1a0e0a);border:1px solid rgba(248,113,113,0.15);border-radius:14px;padding:24px;height:100%">
-    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#f87171;margin-bottom:10px;font-weight:700">BUSINESS PROBLEM</div>
-    <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:16px;line-height:1.3">The Cost of<br><span style="color:#ffaa00">Undetected Inefficiency</span></div>
-    <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:6px;margin-bottom:14px;border-left:2px solid rgba(255,165,0,0.3)">
-        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px">&#128230; DATASET CONTEXT</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5">
-            <strong>Source:</strong> UCI Kaggle Predictive Maintenance (10,000 machines)<br>
-            <strong>Features:</strong> 14 variables (RPM, Torque, Temperature, Tool Wear, Failure Type)<br>
-            <strong>Analysis:</strong> Feature Engineering &rarr; IQR Risk Segmentation &rarr; SQL BI &rarr; Random Forest ML
-        </div>
+<div style="background:linear-gradient(135deg,#100a08,#1a0e0a);border:1px solid rgba(248,113,113,0.15);border-radius:14px;padding:22px;height:100%">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#f87171;margin-bottom:8px;font-weight:700">BUSINESS PROBLEM</div>
+    <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:12px;line-height:1.3">The Cost of<br><span style="color:#ffaa00">Undetected Inefficiency</span></div>
+    <div style="padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:6px;margin-bottom:12px;border-left:2px solid rgba(255,165,0,0.3)">
+        <div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:3px;letter-spacing:1px;text-transform:uppercase">&#128230; Dataset</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.55);line-height:1.5">UCI Kaggle · 10,000 machines · 14 features · IQR &rarr; SQL &rarr; Random Forest</div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #f87171;border-radius:0 8px 8px 0">
-            <div style="font-size:18px;flex-shrink:0">&#9888;&#65039;</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;padding:10px;background:rgba(255,255,255,0.03);border-left:3px solid #f87171;border-radius:0 8px 8px 0">
+            <div style="font-size:15px;flex-shrink:0">&#9888;&#65039;</div>
             <div>
-                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">418 Hidden High-Risk Machines</div>
-                <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">4.18% of fleet operating at abnormal RPM &mdash; <strong>invisible without data analysis</strong>. 2.6&times; higher failure rate (7.2% vs 2.8%).</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px">418 High-Risk Machines — 4.18% of fleet</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.45)"><strong style="color:#f87171">2.6&times; higher failure rate</strong> (7.2% vs 2.8%) via IQR anomaly detection.</div>
             </div>
         </div>
-        <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #fb923c;border-radius:0 8px 8px 0">
-            <div style="font-size:18px;flex-shrink:0">&#128184;</div>
+        <div style="display:flex;gap:10px;padding:10px;background:rgba(255,255,255,0.03);border-left:3px solid #fb923c;border-radius:0 8px 8px 0">
+            <div style="font-size:15px;flex-shrink:0">&#128184;</div>
             <div>
-                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">&#8378;2.96M Annual Financial Exposure</div>
-                <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">L-type machines alone drive 60% of total fleet energy cost (&#8378;65.5M/year). Risk is <strong>concentrated and addressable</strong>.</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px">&#8378;2.96M Annual Exposure</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.45)">L-type = 60% of &#8378;65.5M fleet cost. <strong style="color:#fb923c">Concentrated &amp; addressable.</strong></div>
             </div>
         </div>
-        <div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0">
-            <div style="font-size:18px;flex-shrink:0">&#128201;</div>
+        <div style="display:flex;gap:10px;padding:10px;background:rgba(255,255,255,0.03);border-left:3px solid #fbbf24;border-radius:0 8px 8px 0">
+            <div style="font-size:15px;flex-shrink:0">&#128201;</div>
             <div>
-                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">27.8% Efficiency Gap</div>
-                <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">High-risk machines score 27.76 vs 38.45 fleet average. <strong>Every point of efficiency = direct cost saving</strong>. Mechanical signature: high RPM + low torque = wasted energy.</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px">27.8% Efficiency Gap</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.45)">27.76 vs 38.45 avg. <strong style="color:#fbbf24">High RPM + low torque = wasted energy.</strong></div>
             </div>
         </div>
     </div>
 </div>
 </body></html>
-        """, height=560, scrolling=False)
+        """, height=470, scrolling=False)
 
+    # ✅ DEĞİŞİKLİK 1: Engineering Root Cause kısaltıldı
     with col_right:
         components.html("""
 <!DOCTYPE html><html><head>
 <style>* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; } body { background:transparent; }</style>
 </head><body>
-<div style="background:linear-gradient(135deg,#080d10,#0a1218);border:1px solid rgba(0,206,209,0.15);border-radius:14px;padding:24px;">
-    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#00ced1;margin-bottom:10px;font-weight:700">KEY FINDINGS</div>
-    <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:12px;line-height:1.3">What the Data<br><span style="color:#00ced1">Revealed</span></div>
-    <div style="background:rgba(255,165,0,0.06);border:1px solid rgba(255,165,0,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#ffaa00;margin-bottom:8px;">&#9881;&#65039; ENGINEERING ROOT CAUSE</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;">
-            <strong style="color:#ffaa00">Power Formula: P = (RPM &times; Torque &times; 2&pi;) / 60000</strong><br>
-            High-risk machines waste energy via <strong>high RPM + low torque</strong> &mdash; spinning fast but doing little useful work. Energy converts to friction, heat, vibration instead of productive output.
+<div style="background:linear-gradient(135deg,#080d10,#0a1218);border:1px solid rgba(0,206,209,0.15);border-radius:14px;padding:22px;">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#00ced1;margin-bottom:8px;font-weight:700">KEY FINDINGS</div>
+    <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.3">What the Data<br><span style="color:#00ced1">Revealed</span></div>
+    <div style="background:rgba(255,165,0,0.06);border:1px solid rgba(255,165,0,0.15);border-radius:8px;padding:10px;margin-bottom:10px;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#ffaa00;margin-bottom:5px;">&#9881;&#65039; ROOT CAUSE</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.65);line-height:1.5;">
+            <strong style="color:#ffaa00">P = (RPM &times; Torque &times; 2&pi;) / 60000</strong> &mdash;
+            High-risk units: <strong>high RPM + low torque</strong> = energy lost to friction &amp; heat, not useful work.
         </div>
     </div>
-    <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;margin-bottom:10px;">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:10px;">FLEET RISK BREAKDOWN</div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <span style="font-size:12px;color:rgba(255,255,255,0.6)">L-Type</span>
-            <span style="font-size:12px;font-weight:700;color:#f87171">256 units &middot; 8.6% fail &middot; &#8378;1.82M/yr</span>
+    <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:12px;margin-bottom:10px;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;">FLEET RISK BREAKDOWN</div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:11px;color:rgba(255,255,255,0.6)">L-Type</span>
+            <span style="font-size:11px;font-weight:700;color:#f87171">256 units &middot; 8.6% fail &middot; &#8378;1.82M/yr</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <span style="font-size:12px;color:rgba(255,255,255,0.6)">M-Type</span>
-            <span style="font-size:12px;font-weight:700;color:#fb923c">125 units &middot; 9.6% fail &middot; &#8378;884K/yr</span>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:11px;color:rgba(255,255,255,0.6)">M-Type</span>
+            <span style="font-size:11px;font-weight:700;color:#fb923c">125 units &middot; 9.6% fail &middot; &#8378;884K/yr</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;">
-            <span style="font-size:12px;color:rgba(255,255,255,0.6)">H-Type</span>
-            <span style="font-size:12px;font-weight:700;color:#4ade80">37 units &middot; 2.7% fail &middot; &#8378;259K/yr</span>
-        </div>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <div style="flex:1;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:8px;padding:10px;text-align:center;">
-            <div style="font-size:20px;font-weight:900;color:#f87171;">2.6x</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Higher Failure Rate</div>
-        </div>
-        <div style="flex:1;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:8px;padding:10px;text-align:center;">
-            <div style="font-size:20px;font-weight:900;color:#fbbf24;">9.6%</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">M-Type Max Risk</div>
-        </div>
-        <div style="flex:1;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:10px;text-align:center;">
-            <div style="font-size:20px;font-weight:900;color:#4ade80;">60%</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Cost from L-Type</div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;">
+            <span style="font-size:11px;color:rgba(255,255,255,0.6)">H-Type</span>
+            <span style="font-size:11px;font-weight:700;color:#4ade80">37 units &middot; 2.7% fail &middot; &#8378;259K/yr</span>
         </div>
     </div>
-    <div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:14px;">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;margin-bottom:8px;">ML MODEL OUTPUT</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.7;">
-            Random Forest achieves <strong style="color:#a78bfa">100% accuracy</strong> in priority scoring (0&ndash;5 scale).
-            RPM is the #1 feature at 42% importance &mdash; confirms RPM is the root cause driver.
-            Model is <strong style="color:#4ade80">production-ready</strong> for real-time deployment.
+    <div style="display:flex;gap:7px;margin-bottom:10px;">
+        <div style="flex:1;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:8px;padding:9px;text-align:center;">
+            <div style="font-size:19px;font-weight:900;color:#f87171;">2.6x</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Failure Rate</div>
+        </div>
+        <div style="flex:1;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:8px;padding:9px;text-align:center;">
+            <div style="font-size:19px;font-weight:900;color:#fbbf24;">9.6%</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">M-Type Risk</div>
+        </div>
+        <div style="flex:1;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:9px;text-align:center;">
+            <div style="font-size:19px;font-weight:900;color:#4ade80;">60%</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">L-Type Cost</div>
+        </div>
+    </div>
+    <div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:11px;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;margin-bottom:5px;">ML OUTPUT</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.6;">
+            Random Forest: <strong style="color:#a78bfa">100% accuracy</strong>, priority 0&ndash;5.
+            RPM = #1 feature (42%). <strong style="color:#4ade80">Production-ready.</strong>
         </div>
     </div>
 </div>
 </body></html>
-        """, height=560, scrolling=False)
+        """, height=470, scrolling=False)
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
@@ -440,8 +442,9 @@ if st.session_state.page == 'executive':
 df = load_data()
 
 with st.sidebar:
+    # ✅ DEĞİŞİKLİK 4: padding 24px → 32px (logo yukarı)
     st.markdown("""
-    <div style="padding:24px 16px 18px;border-bottom:1px solid rgba(0,206,209,0.12);text-align:center;background:#0a0e1a">
+    <div style="padding:32px 16px 20px;border-bottom:1px solid rgba(0,206,209,0.12);text-align:center;background:#0a0e1a">
         <div style="font-size:36px;margin-bottom:8px;filter:drop-shadow(0 0 10px rgba(255,165,0,0.5))">⚡</div>
         <div style="font-size:18px;font-weight:800;color:#00ced1;letter-spacing:0.5px;line-height:1.3">Energy<br>Dashboard</div>
     </div>
@@ -571,13 +574,13 @@ if len(dff) != len(df):
 else:
     st.info("💡 **Key Finding:** 418 high-risk machines have **27.8% lower efficiency**. Annual cost impact: **~₺2.96M**. Use sidebar filters to explore segments.")
 
-# ── TABS ──
+# ── TABS — ✅ DEĞİŞİKLİK 3: Tab isimleri kısaltıldı ──
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "⚡ Fleet Health Dashboard",
-    "🔴 Risk Analysis & Cost",
-    "📋 SQL Business Intelligence",
-    "🤖 ML Model & Predictions",
-    "💼 Strategic Action Plan"
+    "⚡ Fleet Health",
+    "🔴 Risk & Cost",
+    "📋 SQL Insights",
+    "🤖 ML Model",
+    "💼 Action Plan"
 ])
 
 # ═══════════════════════════════════════════
@@ -637,8 +640,6 @@ with tab1:
     with col3_r2:
         st.markdown("#### Optimization Priority Distribution")
         st.caption("Score 0–5 · 418 critical (4-5)")
-        # FIX BUG 1+2: Removed duplicate fig5 and misplaced markdown block.
-        # Insight shown AFTER the single correct chart.
         st.markdown("""
         <div style='background:rgba(248,113,113,0.08);border-left:3px solid #f87171;padding:10px;border-radius:6px;margin-bottom:12px'>
             <div style='font-size:11px;color:#f87171;font-weight:700;margin-bottom:4px'>⚠️ URGENT ACTION ZONE</div>
@@ -688,7 +689,6 @@ with tab2:
         with ca: st.metric("Low <0.8kW", f"{energy_counts.get('Low',0):,}")
         with cb: st.metric("Medium 0.8-1.2kW", f"{energy_counts.get('Medium',0):,}")
         with cc: st.metric("High >1.2kW", f"{energy_counts.get('High',0):,}")
-        # FIX BUG: Explicit color mapping per category label (not by order)
         ordered_labels, ordered_values, ordered_colors = [], [], []
         for cat, color in [('Low','rgba(74,222,128,0.8)'),('Medium','rgba(251,191,36,0.8)'),('High','rgba(248,113,113,0.8)')]:
             if cat in energy_counts.index:
@@ -696,12 +696,9 @@ with tab2:
                 ordered_values.append(energy_counts[cat])
                 ordered_colors.append(color)
         fig_energy = go.Figure(data=[go.Pie(
-            labels=ordered_labels,
-            values=ordered_values,
-            hole=0.6,
+            labels=ordered_labels, values=ordered_values, hole=0.6,
             marker=dict(colors=ordered_colors, line=dict(color='#07090f', width=2)),
-            textposition='inside',
-            textinfo='label+percent',
+            textposition='inside', textinfo='label+percent',
             textfont=dict(size=12, color='#fff'),
             hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>Percent: %{percent}<extra></extra>'
         )])
@@ -726,34 +723,111 @@ with tab2:
     st.caption("Mechanical power formula: P = (RPM × Torque × 2π) / 60000")
 
     col1, col2 = st.columns(2)
+
+    # ✅ DEĞİŞİKLİK 6: Box plot — tam veri kontrolü, boş grafik sorunu çözüldü
     with col1:
         st.markdown("#### Power Distribution by Risk Status")
-        fig_power_box = go.Figure()
-        fig_power_box.add_trace(go.Box(y=dff[dff['high_risk_rpm']==0]['calculated_power_kw'],name='Normal',marker_color='rgba(74,222,128,0.6)',boxmean='sd'))
-        fig_power_box.add_trace(go.Box(y=dff[dff['high_risk_rpm']==1]['calculated_power_kw'],name='High-Risk',marker_color='rgba(248,113,113,0.6)',boxmean='sd'))
-        fig_power_box.update_layout(height=300,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),yaxis=dict(gridcolor='#1e2738',title='Calculated Power (kW)',color='#cdd9e5'),xaxis=dict(gridcolor='#1e2738',color='#cdd9e5'),showlegend=True,legend=dict(orientation='h',y=-0.2,font=dict(color='#cdd9e5')),margin=dict(l=50,r=20,t=20,b=60))
-        st.plotly_chart(fig_power_box, use_container_width=True)
-        normal_power_avg = dff[dff['high_risk_rpm']==0]['calculated_power_kw'].mean() if len(dff)>0 else 0
-        highrisk_power_avg = dff[dff['high_risk_rpm']==1]['calculated_power_kw'].mean() if len(dff[dff['high_risk_rpm']==1])>0 else 0
-        if normal_power_avg > 0:
-            power_diff = ((normal_power_avg - highrisk_power_avg) / normal_power_avg * 100)
-            st.info(f"💡 **Power Consumption Pattern:** High-risk machines consume **{abs(power_diff):.1f}% {'less' if power_diff > 0 else 'more'}** power on average ({highrisk_power_avg:.3f} kW vs {normal_power_avg:.3f} kW). Low torque at high RPM = inefficient work output per watt consumed.")
+        normal_pw = dff[dff['high_risk_rpm']==0]['calculated_power_kw']
+        highrisk_pw = dff[dff['high_risk_rpm']==1]['calculated_power_kw']
 
+        if len(normal_pw) == 0 and len(highrisk_pw) == 0:
+            st.warning("⚠️ No data available for current filter selection.")
+        else:
+            fig_power_box = go.Figure()
+            if len(normal_pw) > 0:
+                fig_power_box.add_trace(go.Box(
+                    y=normal_pw,
+                    name=f'Normal ({len(normal_pw):,})',
+                    marker_color='rgba(74,222,128,0.7)',
+                    line_color='rgba(74,222,128,1)',
+                    boxmean='sd',
+                    hovertemplate='<b>Normal</b><br>Power: %{y:.3f} kW<extra></extra>'
+                ))
+            if len(highrisk_pw) > 0:
+                fig_power_box.add_trace(go.Box(
+                    y=highrisk_pw,
+                    name=f'High-Risk ({len(highrisk_pw):,})',
+                    marker_color='rgba(248,113,113,0.7)',
+                    line_color='rgba(248,113,113,1)',
+                    boxmean='sd',
+                    hovertemplate='<b>High-Risk</b><br>Power: %{y:.3f} kW<extra></extra>'
+                ))
+            fig_power_box.update_layout(
+                height=300, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+                font=dict(color='#cdd9e5', size=10),
+                yaxis=dict(gridcolor='#1e2738', title='Calculated Power (kW)', color='#cdd9e5'),
+                xaxis=dict(gridcolor='#1e2738', color='#cdd9e5'),
+                showlegend=True,
+                legend=dict(orientation='h', y=-0.2, font=dict(color='#cdd9e5')),
+                margin=dict(l=50, r=20, t=20, b=60)
+            )
+            st.plotly_chart(fig_power_box, use_container_width=True)
+
+            if len(normal_pw) > 0 and len(highrisk_pw) > 0:
+                normal_avg = normal_pw.mean()
+                highrisk_avg = highrisk_pw.mean()
+                diff_pct = (normal_avg - highrisk_avg) / normal_avg * 100
+                direction = 'less' if diff_pct > 0 else 'more'
+                st.info(f"💡 **Power Pattern:** High-risk machines consume **{abs(diff_pct):.1f}% {direction}** power ({highrisk_avg:.3f} kW vs {normal_avg:.3f} kW normal avg). Low torque at high RPM = poor work output per watt.")
+            elif len(normal_pw) > 0:
+                st.info(f"💡 Normal machines avg: **{normal_pw.mean():.3f} kW** · No high-risk machines in current filter.")
+            else:
+                st.info(f"💡 High-risk machines avg: **{highrisk_pw.mean():.3f} kW** · No normal machines in current filter.")
+
+    # ✅ DEĞİŞİKLİK 6: Scatter plot — tam sample ve veri kontrolü, dinamik y-axis
     with col2:
         st.markdown("#### Power vs Efficiency Correlation")
-        normal_sample = dff[dff['high_risk_rpm']==0].sample(min(800, len(dff[dff['high_risk_rpm']==0]))) if len(dff[dff['high_risk_rpm']==0])>0 else pd.DataFrame()
-        highrisk_sample = dff[dff['high_risk_rpm']==1]
-        fig_power_eff = go.Figure()
-        if len(normal_sample)>0:
-            fig_power_eff.add_trace(go.Scatter(x=normal_sample['calculated_power_kw'],y=normal_sample['efficiency_score'],mode='markers',name=f'Normal ({len(normal_sample):,})',marker=dict(color='rgba(74,222,128,0.5)',size=4,line=dict(width=0)),hovertemplate='<b>Normal</b><br>Power: %{x:.3f} kW<br>Efficiency: %{y:.2f}<extra></extra>'))
-        if len(highrisk_sample)>0:
-            fig_power_eff.add_trace(go.Scatter(x=highrisk_sample['calculated_power_kw'],y=highrisk_sample['efficiency_score'],mode='markers',name=f'High-Risk ({len(highrisk_sample):,})',marker=dict(color='rgba(248,113,113,0.8)',size=6,symbol='diamond',line=dict(width=0.5,color='white')),hovertemplate='<b>High-Risk</b><br>Power: %{x:.3f} kW<br>Efficiency: %{y:.2f}<extra></extra>'))
-        fig_power_eff.update_layout(height=300,plot_bgcolor='#0d1117',paper_bgcolor='#0d1117',font=dict(color='#cdd9e5',size=10),xaxis=dict(gridcolor='#1e2738',title='Calculated Power (kW)',color='#cdd9e5'),yaxis=dict(gridcolor='#1e2738',title='Efficiency Score',color='#cdd9e5',range=[15,50]),legend=dict(orientation='h',y=-0.25,font=dict(color='#cdd9e5')),margin=dict(l=50,r=20,t=20,b=70),hovermode='closest')
-        st.plotly_chart(fig_power_eff, use_container_width=True)
-        st.warning("⚠️ **Engineering Insight:** High-risk machines consume power but produce ~18% less useful work (torque) per kW. Energy goes into friction, heat, and vibration instead of productive output.")
+        normal_df = dff[dff['high_risk_rpm']==0]
+        highrisk_df = dff[dff['high_risk_rpm']==1]
+
+        if len(normal_df) == 0 and len(highrisk_df) == 0:
+            st.warning("⚠️ No data available for current filter selection.")
+        else:
+            fig_power_eff = go.Figure()
+
+            if len(normal_df) > 0:
+                sample_n = min(800, len(normal_df))
+                normal_sample = normal_df.sample(sample_n, random_state=42)
+                fig_power_eff.add_trace(go.Scatter(
+                    x=normal_sample['calculated_power_kw'],
+                    y=normal_sample['efficiency_score'],
+                    mode='markers',
+                    name=f'Normal ({len(normal_df):,})',
+                    marker=dict(color='rgba(74,222,128,0.5)', size=4, line=dict(width=0)),
+                    hovertemplate='<b>Normal</b><br>Power: %{x:.3f} kW<br>Efficiency: %{y:.2f}<extra></extra>'
+                ))
+
+            if len(highrisk_df) > 0:
+                fig_power_eff.add_trace(go.Scatter(
+                    x=highrisk_df['calculated_power_kw'],
+                    y=highrisk_df['efficiency_score'],
+                    mode='markers',
+                    name=f'High-Risk ({len(highrisk_df):,})',
+                    marker=dict(color='rgba(248,113,113,0.8)', size=6, symbol='diamond', line=dict(width=0.5, color='white')),
+                    hovertemplate='<b>High-Risk</b><br>Power: %{x:.3f} kW<br>Efficiency: %{y:.2f}<extra></extra>'
+                ))
+
+            # Veriye göre dinamik y ekseni
+            all_eff_vals = []
+            if len(normal_df) > 0: all_eff_vals.extend(normal_df['efficiency_score'].tolist())
+            if len(highrisk_df) > 0: all_eff_vals.extend(highrisk_df['efficiency_score'].tolist())
+            y_min = max(0, min(all_eff_vals) - 2) if all_eff_vals else 15
+            y_max = max(all_eff_vals) + 2 if all_eff_vals else 50
+
+            fig_power_eff.update_layout(
+                height=300, plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
+                font=dict(color='#cdd9e5', size=10),
+                xaxis=dict(gridcolor='#1e2738', title='Calculated Power (kW)', color='#cdd9e5'),
+                yaxis=dict(gridcolor='#1e2738', title='Efficiency Score', color='#cdd9e5', range=[y_min, y_max]),
+                legend=dict(orientation='h', y=-0.25, font=dict(color='#cdd9e5')),
+                margin=dict(l=50, r=20, t=20, b=70),
+                hovermode='closest'
+            )
+            st.plotly_chart(fig_power_eff, use_container_width=True)
+            st.warning("⚠️ **Engineering Insight:** High-risk machines (diamonds) cluster at low-power + low-efficiency zone. High RPM with low torque = energy wasted as friction and heat rather than productive output.")
 
 # ═══════════════════════════════════════════
-# TAB 3: BUSINESS INSIGHTS
+# TAB 3: SQL INSIGHTS
 # ═══════════════════════════════════════════
 with tab3:
     st.info("🗄️ **SQLite Analysis:** 3 business questions answered on 10,000 records.")
@@ -859,7 +933,7 @@ GROUP BY Type;""", language="sql")
     st.success("✅ **Roadmap to Best-in-Class:** Implementing all 4 initiatives from Tab 5 (Strategic Action Plan) would close these gaps within 12-18 months. Highest-impact actions: Initiative 2 (L-Type RPM) for cost reduction, Initiative 4 (ML Deploy) for maintenance transformation.")
 
 # ═══════════════════════════════════════════
-# TAB 4: PREDICTIVE MODEL
+# TAB 4: ML MODEL
 # ═══════════════════════════════════════════
 with tab4:
     m1, m2, m3, m4 = st.columns(4)
@@ -874,7 +948,6 @@ with tab4:
         st.markdown("#### Feature Importance")
         features = ['RPM','Efficiency','Torque','Power','Failure','Tool Wear','Temp Diff']
         importances = [0.42,0.28,0.12,0.08,0.05,0.03,0.02]
-        # FIX BUG 6: Renamed loop variable from 'c' to 'hex_c' to avoid shadowing column variables
         fi_colors = ['#38bdf8','#4ade80','#fb923c','#fbbf24','#f87171','#a78bfa','#64a6c8']
         fi_bg = [f'rgba({int(hex_c[1:3],16)},{int(hex_c[3:5],16)},{int(hex_c[5:7],16)},0.3)' for hex_c in fi_colors]
         fig_fi = go.Figure()
@@ -886,7 +959,6 @@ with tab4:
         st.markdown("#### Priority Class Distribution")
         priority_counts2 = df['optimization_priority'].value_counts().reindex(range(6),fill_value=0).sort_index()
         colors_p2 = ['#4ade80']*2+['#fbbf24']*2+['#f87171']*2
-        # FIX BUG 6: Renamed loop variable from 'c' to 'hex_c'
         bg_p2 = [f'rgba({int(hex_c[1:3],16)},{int(hex_c[3:5],16)},{int(hex_c[5:7],16)},0.25)' for hex_c in colors_p2]
         fig_cls = go.Figure()
         fig_cls.add_trace(go.Bar(x=[str(i) for i in range(6)],y=priority_counts2.values,marker=dict(color=bg_p2,line=dict(color=colors_p2,width=2)),text=priority_counts2.values,textposition='outside',textfont=dict(color='#cdd9e5')))
@@ -928,7 +1000,6 @@ with tab4:
             'F1': [1.00,1.00,1.00,1.00,1.00,1.00],
             'Support': [4237,3284,1541,520,212,206]
         })
-        # FIX BUG 5: Use plain st.dataframe without .style to avoid Streamlit version issues
         st.dataframe(metrics_df, hide_index=True, use_container_width=True, height=280)
         st.info("💡 **Business Implication:**\n- **Precision = 1.00:** No false alarms\n- **Recall = 1.00:** No missed failures\n- **Support:** Realistic class distribution")
 
@@ -980,8 +1051,7 @@ with tab4:
     st.success("✅ **Model is production-ready** — automatic priority scoring enables proactive, data-driven maintenance.")
 
 # ═══════════════════════════════════════════
-# TAB 5: STRATEGIC ACTION PLAN
-# FIX BUG 3: Corrected indentation — tab5 is now at top level, not inside tab4
+# TAB 5: ACTION PLAN
 # ═══════════════════════════════════════════
 with tab5:
     st.markdown("## 💼 Strategic Action Plan — Data-Driven Roadmap")
@@ -1000,13 +1070,13 @@ with tab5:
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-**Problem Statement:**  
+**Problem Statement:**
 1,000 machines (10% of fleet) operate at **47% below average efficiency** (30.20 vs 38.00).
 
-**Root Cause Analysis:**  
+**Root Cause Analysis:**
 These machines exhibit RPM > 2700 (over-speed stress) OR RPM < 1200 (under-load), Torque < 10 Nm (insufficient useful work output), or Tool wear > 200 min (maintenance overdue).
 
-**Recommended Action:**  
+**Recommended Action:**
 1. Prioritize worst 100 machines first (efficiency < 25)
 2. Check: RPM controller calibration, tool condition, bearing wear
 3. Retune to optimal zone: 1400-1800 RPM, 35-45 Nm torque
@@ -1025,10 +1095,10 @@ These machines exhibit RPM > 2700 (over-speed stress) OR RPM < 1200 (under-load)
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-**Problem Statement:**  
+**Problem Statement:**
 L-type machines = 60% of total energy cost (₺65.5M/year). 256 high-risk L-type units operate outside 1139-1895 RPM optimal zone.
 
-**Recommended Action:**  
+**Recommended Action:**
 1. Install RPM sensors on 256 high-risk L-type machines
 2. Set soft limits at 1895 RPM (alert) and hard limits at 2100 RPM (auto-reduce)
 3. Operator training: "Stay in the green zone (1400-1800 RPM)"
@@ -1048,10 +1118,10 @@ L-type machines = 60% of total energy cost (₺65.5M/year). 256 high-risk L-type
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-**Problem Statement:**  
+**Problem Statement:**
 M-type machines have **9.6% failure rate** — highest in fleet (vs 8.6% L-type, 2.7% H-type).
 
-**Recommended Action:**  
+**Recommended Action:**
 1. **Phase 1 (Week 1-2):** Failure mode analysis on last 50 M-type failures
 2. **Phase 2 (Week 3-4):** Sensor data audit — compare M vs L vs H operating patterns
 3. **Phase 3 (Week 5-8):** Pilot predictive maintenance on 20 M-type machines
@@ -1071,10 +1141,10 @@ M-type machines have **9.6% failure rate** — highest in fleet (vs 8.6% L-type,
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-**Problem Statement:**  
+**Problem Statement:**
 Current analysis is retrospective — can't prevent NEW machines from becoming high-risk.
 
-**Recommended Action:**  
+**Recommended Action:**
 - **Phase 1 (Day 1-30):** Integrate model with SCADA/MES, set up data pipeline
 - **Phase 2 (Day 31-90):** Pilot on 200 machines, auto-flag at Priority 3+
 - **Phase 3 (Day 91-180):** Fleet-wide rollout, integrate with CMMS (auto work orders)
