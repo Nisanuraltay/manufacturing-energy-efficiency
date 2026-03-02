@@ -230,7 +230,7 @@ if st.session_state.page == 'executive':
 
     col_left, col_right = st.columns(2)
 
-    # ✅ DEĞİŞİKLİK 1: Problem kartları kısaltıldı — 1 cümle + metrik
+    
     with col_left:
         components.html("""
 <!DOCTYPE html><html><head>
@@ -270,7 +270,7 @@ if st.session_state.page == 'executive':
 </body></html>
         """, height=470, scrolling=False)
 
-    # ✅ DEĞİŞİKLİK 1: Engineering Root Cause kısaltıldı
+    
     with col_right:
         components.html("""
 <!DOCTYPE html><html><head>
@@ -556,7 +556,7 @@ if len(dff) != len(df):
 else:
     st.info("💡 **Key Finding:** 418 high-risk machines have **27.8% lower efficiency**. Annual cost impact: **~₺2.96M**. Use sidebar filters to explore segments.")
 
-# ── TABS — ✅ DEĞİŞİKLİK 3: Tab isimleri kısaltıldı ──
+
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "⚡ Fleet Health",
     "🔴 Risk & Cost",
@@ -1049,7 +1049,7 @@ body{background:transparent;}
 </body></html>
     """, height=290, scrolling=False)
 
-    # ── EXPANDER DETAILS (kapalı başlayan, tıklanınca açılan) ──
+    # ── EXPANDER DETAILS
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
     st.markdown("<div style='font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:10px;font-weight:700'>📋 INITIATIVE DETAILS — click to expand</div>", unsafe_allow_html=True)
 
